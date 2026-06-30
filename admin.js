@@ -5,30 +5,15 @@ let db = null;
 let currentProducts = [];
 let currentOrders = [];
 
-// Khởi động trang quản trị
-document.addEventListener("DOMContentLoaded", () => {
-  checkAdminAuth();
-});
-
-// ----------------------------------------------------
-// KIỂM TRA ĐĂNG NHẬP ADMIN
-// ----------------------------------------------------
-function checkAdminAuth() {
-  const isLoggedIn = sessionStorage.getItem("aquatica_admin_logged_in") === "true";
-  const loginWrapper = document.getElementById("admin-login-wrapper");
-  const dashboardWrapper = document.getElementById("admin-dashboard-wrapper");
+// Khởi động trang quản trị khi được gọi từ login.html
+window.initAdminDashboard = function() {
+  db = null;
+  currentProducts = [];
+  currentOrders = [];
   
-  if (isLoggedIn) {
-    if (loginWrapper) loginWrapper.style.display = "none";
-    if (dashboardWrapper) dashboardWrapper.style.display = "flex";
-    
-    initFirebaseAdmin();
-    loadAdminData();
-  } else {
-    if (loginWrapper) loginWrapper.style.display = "flex";
-    if (dashboardWrapper) dashboardWrapper.style.display = "none";
-  }
-}
+  initFirebaseAdmin();
+  loadAdminData();
+};
 
 window.handleAdminLogin = function(e) {
   e.preventDefault();

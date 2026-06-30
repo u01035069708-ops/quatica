@@ -558,8 +558,20 @@ window.handleCheckout = async function() {
   }
   
   // Tạo đơn hàng mới
+  let customerUid = null;
+  if (window.isFirebaseConfigured && auth && auth.currentUser) {
+    customerUid = auth.currentUser.uid;
+  } else {
+    const mockUserStr = localStorage.getItem("aquatica_mock_user");
+    if (mockUserStr) {
+      const mockUser = JSON.parse(mockUserStr);
+      customerUid = mockUser.uid;
+    }
+  }
+  
   const totalPrice = shoppingCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
   const newOrder = {
+    customerUid: customerUid,
     customerName: name,
     customerPhone: phone,
     customerAddress: address,
@@ -686,8 +698,9 @@ function renderLoggedInUser(displayName, photoURL, phoneNumber) {
   userNavItem.innerHTML = `
     <div class="user-info-nav">
       <img src="${avatarUrl}" class="user-avatar" title="${displayName || 'Khách quen'}">
-      <span>Chào, ${displayName ? displayName.split(" ").pop() : 'Khách'}</span>
-      <a href="#" onclick="handleLogout(event)" class="nav-link" style="padding: 2px 8px; font-size: 13px; color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Thoát</a>
+      <span style="font-weight: 600;">Chào, ${displayName ? displayName.split(" ").pop() : 'Khách'}</span>
+      <a href="login.html" class="nav-link" style="padding: 2px 4px; font-size: 13px; color: var(--primary);"><i class="fa-solid fa-clock-rotate-left"></i> Đơn hàng</a>
+      <a href="#" onclick="handleLogout(event)" class="nav-link" style="padding: 2px 4px; font-size: 13px; color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Thoát</a>
     </div>
   `;
   

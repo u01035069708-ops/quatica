@@ -3,67 +3,597 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng Nhập Khách Hàng - Nam Cá Cảnh</title>
+  <title>Cổng Thành Viên - Nam Cá Cảnh</title>
   <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="app.css">
+  
+  <style>
+    /* Custom style for Customer Order Dashboard inside login.html */
+    .customer-dashboard-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 992px) {
+      .customer-dashboard-container {
+        grid-template-columns: 1fr;
+        margin: 20px auto;
+      }
+    }
+
+    /* Profile Card for Customer */
+    .profile-card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px 24px;
+      box-shadow: 0 10px 30px rgba(0, 92, 138, 0.04);
+      border: 1px solid rgba(0, 92, 138, 0.05);
+      text-align: center;
+      height: fit-content;
+      transition: all 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 92, 138, 0.08);
+    }
+
+    .profile-avatar-wrapper {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 20px auto;
+    }
+
+    .profile-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #e0f2fe;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: var(--success);
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      border: 3px solid white;
+    }
+
+    .profile-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 5px;
+    }
+
+    .profile-email {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      word-break: break-all;
+    }
+
+    .profile-meta {
+      border-top: 1px solid #f1f5f9;
+      padding-top: 20px;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13.5px;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+    }
+
+    .meta-item i {
+      color: var(--primary);
+      width: 18px;
+    }
+
+    .profile-actions {
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-block.btn-home {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-block.btn-home:hover {
+      background: var(--primary-deep);
+    }
+
+    .btn-block.btn-logout {
+      background: #f1f5f9;
+      color: var(--danger);
+    }
+
+    .btn-block.btn-logout:hover {
+      background: #fee2e2;
+    }
+
+    /* Customer Orders List */
+    .orders-panel {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 92, 138, 0.04);
+      border: 1px solid rgba(0, 92, 138, 0.05);
+      min-height: 400px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 20px;
+      margin-bottom: 25px;
+    }
+
+    .panel-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-title i {
+      color: var(--accent);
+    }
+
+    .connection-status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .empty-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .empty-btn:hover {
+      background: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .order-id-label {
+      font-family: monospace;
+      font-weight: 600;
+      color: var(--text-dark);
+      background: #f1f5f9;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .shipping-details-info {
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--text-dark);
+    }
+
+    .shipping-details-info strong {
+      color: var(--primary-deep);
+    }
+
+    .order-price-val {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 15px;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Header Navigation (Simplified) -->
-  <header>
+  <!-- Top Header Navigation (Visible for Login & Customer Profile, Hidden for Admin Layout) -->
+  <header id="main-header">
     <div class="nav-container">
       <a href="index.html" class="logo-section">
         <div class="logo-icon"><i class="fa-solid fa-fish-fins"></i></div>
         <span class="logo-text">Nam Cá Cảnh</span>
       </a>
       <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ</a></li>
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
+        <li><a href="about.html" class="nav-link"><i class="fa-solid fa-circle-info"></i> Giới thiệu</a></li>
       </ul>
     </div>
   </header>
 
-  <!-- Login Area -->
-  <main class="login-container">
-    <div class="login-card">
-      <div class="logo-icon" style="margin: 0 auto 20px auto; width: 60px; height: 60px; font-size: 30px;"><i class="fa-solid fa-fish-fins"></i></div>
-      <h2>Chào Mừng Bạn Trở Lại</h2>
-      <p>Đăng nhập để nhận thông tin ưu đãi và lưu thông tin đặt hàng nhanh chóng hơn cho những lần sau.</p>
+  <!-- ========================================================================= -->
+  <!-- VIEW 1: LOGIN FORM CARD WRAPPER                                           -->
+  <!-- ========================================================================= -->
+  <div id="login-card-wrapper" style="display: none;">
+    <main class="login-container">
+      <div class="login-card">
+        <div class="logo-icon" style="margin: 0 auto 20px auto; width: 60px; height: 60px; font-size: 30px;"><i class="fa-solid fa-fish-fins"></i></div>
+        <h2>Chào Mừng Bạn Trở Lại</h2>
+        <p>Đăng nhập để xem lịch sử đơn hàng hoặc quản trị sản phẩm cửa hàng cá cảnh.</p>
+        
+        <!-- Connection Status indicator -->
+        <div id="auth-status-indicator" style="margin-bottom: 20px; font-size: 13px; padding: 6px; border-radius: 6px; text-align: center;"></div>
+
+        <!-- Social Logins (Google & Facebook) -->
+        <div class="social-login-group">
+          <button class="social-btn google" id="google-login-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
+            Đăng nhập bằng Google
+          </button>
+          <button class="social-btn facebook" id="facebook-login-btn">
+            <i class="fa-brands fa-facebook-f" style="font-size: 18px; margin-right: 5px;"></i>
+            Đăng nhập bằng Facebook
+          </button>
+        </div>
+
+        <div class="login-divider">
+          <span>Hoặc đăng nhập thông thường</span>
+        </div>
+
+        <!-- Simulated Standard Email / Password Form -->
+        <form class="login-form" onsubmit="handleStandardLogin(event)">
+          <div class="form-group">
+            <label for="email">Tên đăng nhập hoặc Email</label>
+            <input type="text" id="email" class="login-input" placeholder="ten-cua-ban@gmail.com hoặc admin" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input type="password" id="password" class="login-input" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="login-submit-btn">Đăng Nhập</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 2: CUSTOMER ORDER HISTORY DASHBOARD WRAPPER                          -->
+  <!-- ========================================================================= -->
+  <div id="customer-orders-wrapper" class="customer-dashboard-container" style="display: none;">
+    
+    <!-- Profile Card (Left) -->
+    <aside class="profile-card">
+      <div class="profile-avatar-wrapper">
+        <img id="cust-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100" class="profile-avatar" alt="Avatar">
+        <div class="profile-badge"><i class="fa-solid fa-check"></i></div>
+      </div>
+      <h2 class="profile-name" id="cust-display-name">Đang tải...</h2>
+      <p class="profile-email" id="cust-email">...</p>
       
-      <!-- Connection Status indicator -->
-      <div id="auth-status-indicator" style="margin-bottom: 20px; font-size: 13px; padding: 6px; border-radius: 6px;"></div>
-
-      <!-- Social Logins (Google & Facebook) -->
-      <div class="social-login-group">
-        <button class="social-btn google" id="google-login-btn">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
-          Đăng nhập bằng Google
-        </button>
-        <button class="social-btn facebook" id="facebook-login-btn">
-          <i class="fa-brands fa-facebook-f" style="font-size: 18px; margin-right: 5px;"></i>
-          Đăng nhập bằng Facebook
-        </button>
+      <div class="profile-meta">
+        <div class="meta-item">
+          <i class="fa-solid fa-id-card"></i>
+          <span>Loại tài khoản: <strong>Khách hàng</strong></span>
+        </div>
+        <div class="meta-item">
+          <i class="fa-solid fa-circle-nodes"></i>
+          <span>Hệ thống: <strong id="cust-sys-mode">Xác minh...</strong></span>
+        </div>
       </div>
 
-      <div class="login-divider">
-        <span>Hoặc đăng nhập thông thường</span>
+      <div class="profile-actions">
+        <button class="btn-block btn-home" onclick="window.location.href='index.html'">
+          <i class="fa-solid fa-cart-shopping"></i> Mua Sắm Cá Cảnh
+        </button>
+        <button class="btn-block btn-logout" onclick="handleCustomerLogout()">
+          <i class="fa-solid fa-right-from-bracket"></i> Đăng Xuất
+        </button>
+      </div>
+    </aside>
+
+    <!-- Orders Panel (Right) -->
+    <section class="orders-panel">
+      <div class="panel-header">
+        <h2 class="panel-title"><i class="fa-solid fa-receipt"></i> Lịch Sử Đơn Hàng Đã Đặt</h2>
+        <div id="cust-conn-status" class="connection-status">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </div>
       </div>
 
-      <!-- Simulated Standard Email / Password Form -->
-      <form class="login-form" onsubmit="handleStandardLogin(event)">
-        <div class="form-group">
-          <label for="email">Địa chỉ Email</label>
-          <input type="email" id="email" class="login-input" placeholder="ten-cua-ban@gmail.com" required>
+      <!-- Orders Table -->
+      <div class="data-table-container" id="cust-table-wrapper" style="display: none;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mã Đơn</th>
+              <th>Ngày Đặt</th>
+              <th>Thông Tin Nhận Hàng</th>
+              <th>Sản Phẩm Đã Mua</th>
+              <th>Tổng Tiền</th>
+              <th>Trạng Thế</th>
+            </tr>
+          </thead>
+          <tbody id="cust-orders-tbody">
+            <!-- Injected by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="cust-empty-wrapper" style="display: none;">
+        <div class="empty-state-icon"><i class="fa-solid fa-box-open"></i></div>
+        <h3>Bạn chưa có đơn đặt hàng nào</h3>
+        <p>Ghé thăm danh mục sản phẩm và chọn lựa dòng cá yêu thích ngay nhé!</p>
+        <button class="empty-btn" onclick="window.location.href='index.html#san-pham'">
+          <i class="fa-solid fa-compass"></i> Xem sản phẩm
+        </button>
+      </div>
+    </section>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 3: ADMIN DASHBOARD WRAPPER                                           -->
+  <!-- ========================================================================= -->
+  <div id="admin-dashboard-wrapper" class="admin-layout" style="display: none;">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-logo">
+        <i class="fa-solid fa-fish-fins"></i> Nam Cá Cảnh Admin
+      </div>
+      <ul class="admin-menu">
+        <li class="admin-menu-item">
+          <a class="admin-menu-link active" onclick="switchTab('orders', this)">
+            <i class="fa-solid fa-receipt"></i> Quản lý đơn hàng
+          </a>
+        </li>
+        <li class="admin-menu-item">
+          <a class="admin-menu-link" onclick="switchTab('products', this)">
+            <i class="fa-solid fa-boxes-stacked"></i> Quản lý sản phẩm
+          </a>
+        </li>
+        <li class="admin-menu-item" style="margin-top: 50px;">
+          <a href="index.html" class="admin-menu-link" style="color: var(--accent-soft);">
+            <i class="fa-solid fa-shop"></i> Xem trang chủ
+          </a>
+        </li>
+        <li class="admin-menu-item">
+          <a class="admin-menu-link" onclick="handleAdminLogout()" style="color: var(--danger);">
+            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      
+      <!-- Tab 1: Orders Section -->
+      <section id="tab-orders" class="admin-section active">
+        <div class="admin-header-actions">
+          <h2 class="admin-title">Tiếp Nhận Đơn Hàng</h2>
+          <div id="admin-orders-indicator" style="font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 5px;"></div>
         </div>
-        <div class="form-group">
-          <label for="password">Mật khẩu</label>
-          <input type="password" id="password" class="login-input" placeholder="••••••••" required>
+
+        <!-- KPI Summary Cards -->
+        <div class="admin-stats-grid">
+          <div class="stat-card">
+            <span class="stat-card-title">Tổng số đơn</span>
+            <span class="stat-card-val" id="stat-total-orders">0</span>
+          </div>
+          <div class="stat-card orders-stat">
+            <span class="stat-card-title">Đơn chờ xử lý</span>
+            <span class="stat-card-val" id="stat-pending-orders" style="color: var(--warning);">0</span>
+          </div>
+          <div class="stat-card revenue-stat" style="border-left-color: var(--success);">
+            <span class="stat-card-title">Doanh thu dự kiến</span>
+            <span class="stat-card-val" id="stat-revenue" style="color: var(--success);">0đ</span>
+          </div>
         </div>
-        <button type="submit" class="login-submit-btn">Đăng Nhập</button>
+
+        <!-- Orders Table -->
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã Đơn</th>
+                <th>Khách Hàng</th>
+                <th>Sản Phẩm Đặt</th>
+                <th>Tổng Tiền</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-tbody">
+              <!-- Orders data will be dynamically injected here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Tab 2: Products Section -->
+      <section id="tab-products" class="admin-section">
+        <div class="admin-header-actions">
+          <h2 class="admin-title">Danh Mục Sản Phẩm</h2>
+          <button class="btn btn-accent" onclick="openProductModal()" style="font-size: 14px; padding: 10px 20px; border-radius: 50px;">
+            <i class="fa-solid fa-plus" style="margin-right: 5px;"></i> Thêm Sản Phẩm Mới
+          </button>
+        </div>
+
+        <!-- Products Table -->
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Hình Ảnh</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Phân Loại</th>
+                <th>Đơn Giá</th>
+                <th>Số Lượng Kho</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="admin-products-tbody">
+              <!-- Products CRUD list will be injected here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- CRUD Product Form Modal (Add / Edit) -->
+  <div class="admin-modal" id="product-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Thêm Sản Phẩm Mới</h3>
+        <button class="close-cart-btn" onclick="closeProductModal()" style="font-size: 28px; line-height: 1;">&times;</button>
+      </div>
+      <form id="product-form" onsubmit="saveProduct(event)">
+        <div class="modal-body">
+          <div class="modal-form">
+            <input type="hidden" id="form-product-id">
+            
+            <div class="form-group">
+              <label for="form-name">Tên sản phẩm *</label>
+              <input type="text" id="form-name" class="modal-input" placeholder="Ví dụ: Cá Koi Nhật..." required>
+            </div>
+            
+            <div class="modal-row-2">
+              <div class="form-group">
+                <label for="form-category">Phân loại sản phẩm *</label>
+                <select id="form-category" class="modal-select" required>
+                  <option value="ca-canh">Cá cảnh</option>
+                  <option value="cay-thuy-sinh">Cây thủy sinh</option>
+                  <option value="bom-loc">Bơm & Lọc nước</option>
+                  <option value="phu-kien">Phụ kiện khác</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="form-price">Giá bán (VND) *</label>
+                <input type="number" id="form-price" class="modal-input" min="0" placeholder="Ví dụ: 150000" required>
+              </div>
+            </div>
+
+            <div class="modal-row-2">
+              <div class="form-group">
+                <label for="form-quantity">Số lượng nhập kho *</label>
+                <input type="number" id="form-quantity" class="modal-input" min="0" placeholder="Ví dụ: 20" required>
+              </div>
+              <div class="form-group">
+                <label for="form-status">Tình trạng hiển thị *</label>
+                <select id="form-status" class="modal-select" required>
+                  <option value="in-stock">Còn hàng (In stock)</option>
+                  <option value="out-of-stock">Hết hàng (Out of stock)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="form-image-url">Đường dẫn hình ảnh (URL hoặc đường dẫn cục bộ)</label>
+              <input type="text" id="form-image-url" class="modal-input" placeholder="Ví dụ: images/ongtien.jpg hoặc https://...">
+              <span style="font-size: 11px; color: var(--text-muted);">
+                Nếu để trống, hệ thống sẽ tự động sử dụng hình ảnh mặc định khi hiển thị.
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="form-description">Mô tả tóm tắt sản phẩm</label>
+              <textarea id="form-description" class="modal-input" rows="3" placeholder="Thông tin chi tiết về sản phẩm..." style="resize: vertical; font-family: inherit;"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" onclick="closeProductModal()" style="padding: 10px 20px;">Hủy Bỏ</button>
+          <button type="submit" class="btn btn-success" style="padding: 10px 25px;">Lưu Sản Phẩm</button>
+        </div>
       </form>
     </div>
-  </main>
+  </div>
+
 
   <!-- Toast Notification Box -->
   <div class="toast-container" id="toast-container"></div>
@@ -75,47 +605,130 @@
 
   <!-- Firebase Config -->
   <script src="firebase-db-config.js"></script>
+  
+  <!-- Admin scripts containing administration methods -->
+  <script src="admin.js?v=1.0.2"></script>
 
-  <!-- Login Logic Script -->
+  <!-- Main Portal script -->
   <script>
     let auth = null;
+    let mainDb = null;
+    let customerUser = null;
 
     document.addEventListener("DOMContentLoaded", () => {
-      initFirebaseLogin();
+      initFirebasePortal();
+      checkAuthAndShowView();
       setupLoginButtons();
     });
 
-    function initFirebaseLogin() {
+    // 1. Quản lý trạng thái hiển thị
+    function showView(viewName) {
+      const header = document.getElementById("main-header");
+      const loginWrapper = document.getElementById("login-card-wrapper");
+      const customerWrapper = document.getElementById("customer-orders-wrapper");
+      const adminWrapper = document.getElementById("admin-dashboard-wrapper");
+
+      if (viewName === 'login') {
+        header.style.display = "block";
+        loginWrapper.style.display = "block";
+        customerWrapper.style.display = "none";
+        adminWrapper.style.display = "none";
+      } else if (viewName === 'customer') {
+        header.style.display = "block";
+        loginWrapper.style.display = "none";
+        customerWrapper.style.display = "grid";
+        adminWrapper.style.display = "none";
+      } else if (viewName === 'admin') {
+        header.style.display = "none";
+        loginWrapper.style.display = "none";
+        customerWrapper.style.display = "none";
+        adminWrapper.style.display = "flex";
+      }
+    }
+
+    // 2. Khởi tạo Firebase Auth & Firestore cho Portal
+    function initFirebasePortal() {
       const indicator = document.getElementById("auth-status-indicator");
       
       if (window.isFirebaseConfigured) {
         try {
-          firebase.initializeApp(window.firebaseConfig);
+          if (!firebase.apps.length) {
+            firebase.initializeApp(window.firebaseConfig);
+          }
           auth = firebase.auth();
+          mainDb = firebase.firestore();
           
           if (indicator) {
             indicator.style.backgroundColor = "rgba(16, 185, 129, 0.12)";
             indicator.style.color = "var(--success)";
-            indicator.innerHTML = `<i class="fa-solid fa-wifi"></i> Đã kết nối Firebase Auth chính thức.`;
+            indicator.innerHTML = `<i class="fa-solid fa-wifi"></i> Firebase Cloud Online`;
           }
         } catch (e) {
           console.error(e);
-          setupMockIndicator();
+          setupOfflineIndicator();
         }
       } else {
-        setupMockIndicator();
+        setupOfflineIndicator();
       }
     }
 
-    function setupMockIndicator() {
+    function setupOfflineIndicator() {
       const indicator = document.getElementById("auth-status-indicator");
       if (indicator) {
         indicator.style.backgroundColor = "rgba(245, 158, 11, 0.12)";
         indicator.style.color = "var(--warning)";
-        indicator.innerHTML = `<i class="fa-solid fa-circle-nodes"></i> Đang chạy giả lập Auth (Chưa cấu hình Firebase)`;
+        indicator.innerHTML = `<i class="fa-solid fa-circle-nodes"></i> Đang chạy giả lập Offline (Chưa cấu hình Firebase)`;
       }
     }
 
+    // 3. Kiểm tra Session hiện tại và hiển thị View đúng
+    function checkAuthAndShowView() {
+      // Ưu tiên kiểm tra quyền Admin trước
+      const isAdminLoggedIn = sessionStorage.getItem("aquatica_admin_logged_in") === "true";
+      if (isAdminLoggedIn) {
+        showView('admin');
+        if (window.initAdminDashboard) {
+          window.initAdminDashboard();
+        }
+        return;
+      }
+
+      // Kiểm tra tài khoản khách hàng
+      if (window.isFirebaseConfigured && auth) {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            customerUser = {
+              uid: user.uid,
+              displayName: user.displayName || "Khách quen",
+              email: user.email || "Không có email",
+              photoURL: user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100"
+            };
+            showView('customer');
+            renderCustProfile(customerUser);
+            loadCustOrdersFirebase(customerUser.uid);
+          } else {
+            // Không có Firebase user -> kiểm tra xem có Mock user không
+            checkMockUserOrShowLogin();
+          }
+        });
+      } else {
+        checkMockUserOrShowLogin();
+      }
+    }
+
+    function checkMockUserOrShowLogin() {
+      const mockUserStr = localStorage.getItem("aquatica_mock_user");
+      if (mockUserStr) {
+        customerUser = JSON.parse(mockUserStr);
+        showView('customer');
+        renderCustProfile(customerUser);
+        loadCustOrdersLocal(customerUser.uid);
+      } else {
+        showView('login');
+      }
+    }
+
+    // 4. Cấu hình Nút đăng nhập Google / Facebook
     function setupLoginButtons() {
       const googleBtn = document.getElementById("google-login-btn");
       const facebookBtn = document.getElementById("facebook-login-btn");
@@ -123,27 +736,20 @@
       googleBtn.addEventListener("click", () => {
         if (window.isFirebaseConfigured && auth) {
           if (window.location.protocol === 'file:') {
-            showToast("Đăng nhập Google không hỗ trợ chạy trực tiếp file://. Hãy chạy bằng Live Server (localhost) hoặc đưa lên GitHub Pages!", "error");
+            showToast("Đăng nhập Google không hỗ trợ chạy trực tiếp file://. Hãy chạy bằng Live Server!", "error");
             return;
           }
           const provider = new firebase.auth.GoogleAuthProvider();
           auth.signInWithPopup(provider)
             .then((result) => {
               showToast("Đăng nhập Google thành công!");
-              setTimeout(() => {
-                window.location.href = "index.html";
-              }, 1200);
+              // Firebase state change handler tự động nhận diện và cập nhật view
             })
             .catch((err) => {
               console.error(err);
-              if (err.code === 'auth/unauthorized-domain') {
-                showToast("Miền này chưa được cấp phép trong Firebase Console (Authorized Domains)!", "error");
-              } else {
-                showToast("Lỗi đăng nhập Google: " + err.message, "error");
-              }
+              showToast("Lỗi đăng nhập Google: " + err.message, "error");
             });
         } else {
-          // Giả lập đăng nhập bằng Google
           handleMockLogin("Khách Hàng Google Giả Lập");
         }
       });
@@ -151,56 +757,63 @@
       facebookBtn.addEventListener("click", () => {
         if (window.isFirebaseConfigured && auth) {
           if (window.location.protocol === 'file:') {
-            showToast("Đăng nhập Facebook không hỗ trợ chạy trực tiếp file://. Hãy chạy bằng Live Server hoặc đưa lên GitHub Pages!", "error");
+            showToast("Đăng nhập Facebook không hỗ trợ chạy trực tiếp file://. Hãy chạy bằng Live Server!", "error");
             return;
           }
           const provider = new firebase.auth.FacebookAuthProvider();
           auth.signInWithPopup(provider)
             .then((result) => {
               showToast("Đăng nhập Facebook thành công!");
-              setTimeout(() => {
-                window.location.href = "index.html";
-              }, 1200);
             })
             .catch((err) => {
               console.error(err);
-              if (err.code === 'auth/unauthorized-domain') {
-                showToast("Miền này chưa được cấp phép trong Firebase Console (Authorized Domains)!", "error");
-              } else {
-                showToast("Lỗi đăng nhập Facebook: " + err.message, "error");
-              }
+              showToast("Lỗi đăng nhập Facebook: " + err.message, "error");
             });
         } else {
-          // Giả lập đăng nhập bằng Facebook
           handleMockLogin("Khách Hàng Facebook Giả Lập");
         }
       });
     }
 
-    // Đăng nhập email thông thường giả lập
+    // 5. Đăng nhập Email và Admin
     window.handleStandardLogin = function(e) {
       e.preventDefault();
-      const email = document.getElementById("email").value;
-      const nickname = email.split("@")[0];
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      
+      // XỬ LÝ ADMIN ĐĂNG NHẬP
+      if (email === "admin" && password === "admin1234") {
+        sessionStorage.setItem("aquatica_admin_logged_in", "true");
+        showToast("Đăng nhập quyền Admin thành công!", "success");
+        setTimeout(() => {
+          showView('admin');
+          if (window.initAdminDashboard) {
+            window.initAdminDashboard();
+          }
+        }, 1000);
+        return;
+      }
+      
+      // XỬ LÝ KHÁCH HÀNG ĐĂNG NHẬP
+      const nickname = email.includes("@") ? email.split("@")[0] : email;
       
       if (window.isFirebaseConfigured && auth) {
-        // Sử dụng Firebase Auth thật nếu có cấu hình
-        const password = document.getElementById("password").value;
         showToast("Đang kết nối Firebase Auth...", "warning");
         auth.signInWithEmailAndPassword(email, password)
           .then(() => {
             showToast("Đăng nhập thành công!");
-            setTimeout(() => { window.location.href = "index.html"; }, 1200);
           })
           .catch(err => {
-            // Nếu tài khoản chưa tồn tại, thử đăng ký tự động để tiện test
-            if (err.code === 'auth/user-not-found') {
+            if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-email') {
+              if (!email.includes("@")) {
+                showToast("Vui lòng nhập đúng định dạng Email để đăng nhập khách hàng!", "error");
+                return;
+              }
               showToast("Tài khoản chưa có, đang tự động đăng ký mới cho bạn...", "warning");
               auth.createUserWithEmailAndPassword(email, password)
                 .then((cred) => {
                   cred.user.updateProfile({ displayName: nickname });
                   showToast("Đăng ký & đăng nhập thành công!");
-                  setTimeout(() => { window.location.href = "index.html"; }, 1200);
                 })
                 .catch(regErr => {
                   showToast("Lỗi đăng ký: " + regErr.message, "error");
@@ -210,7 +823,6 @@
             }
           });
       } else {
-        // Đăng nhập giả lập lưu vào local storage để index.html đọc ra
         handleMockLogin(nickname);
       }
     };
@@ -218,28 +830,204 @@
     function handleMockLogin(displayName) {
       showToast("Đang giả lập đăng nhập...", "warning");
       
-      // Tạo một mock user object lưu vào LocalStorage
       const mockUser = {
         uid: "mock-uid-" + Date.now(),
         displayName: displayName,
-        email: "simulated_user@namcacanh.vn",
+        email: displayName.includes("@") ? displayName : displayName + "@namcacanh.vn",
         photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100",
         isMock: true
       };
       
-      // Chúng ta sẽ giả lập sự kiện onAuthStateChanged bằng cách cho app.js đọc đối tượng này.
-      // Do Firebase Auth thật lưu trong indexedDB, ta sẽ lưu mockUser này vào localStorage.
       localStorage.setItem("aquatica_mock_user", JSON.stringify(mockUser));
       
-      // Cập nhật app.js bằng cách ghi đè hoặc chỉnh sửa cơ chế lắng nghe của nó
-      // Ta sẽ viết logic đọc mock user này vào app.js
       setTimeout(() => {
         showToast("Đăng nhập giả lập thành công! Chào " + displayName);
         setTimeout(() => {
-          window.location.href = "index.html";
-        }, 1000);
+          checkAuthAndShowView();
+        }, 800);
       }, 1000);
     }
+
+    // 6. Quản lý Dashboard Khách hàng
+    function renderCustProfile(user) {
+      document.getElementById("cust-avatar").src = user.photoURL;
+      document.getElementById("cust-display-name").textContent = user.displayName;
+      document.getElementById("cust-email").textContent = user.email;
+
+      const sysMode = document.getElementById("cust-sys-mode");
+      const statusIcon = document.getElementById("cust-conn-status");
+      
+      if (window.isFirebaseConfigured) {
+        sysMode.textContent = "Firebase Online";
+        sysMode.style.color = "var(--success)";
+        
+        statusIcon.style.backgroundColor = "rgba(16, 185, 129, 0.12)";
+        statusIcon.style.color = "var(--success)";
+        statusIcon.innerHTML = `<i class="fa-solid fa-cloud"></i> Firebase`;
+      } else {
+        sysMode.textContent = "Offline Storage";
+        sysMode.style.color = "var(--warning)";
+        
+        statusIcon.style.backgroundColor = "rgba(245, 158, 11, 0.12)";
+        statusIcon.style.color = "var(--warning)";
+        statusIcon.innerHTML = `<i class="fa-solid fa-server"></i> Offline`;
+      }
+    }
+
+    function loadCustOrdersFirebase(uid) {
+      if (!mainDb) return;
+      
+      mainDb.collection("orders")
+        .where("customerUid", "==", uid)
+        .onSnapshot((snapshot) => {
+          const orders = [];
+          snapshot.forEach((doc) => {
+            orders.push({ id: doc.id, ...doc.data() });
+          });
+          
+          orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          renderCustOrdersTable(orders);
+        }, (error) => {
+          console.error("Lỗi Firestore:", error);
+          loadCustOrdersLocal(uid);
+        });
+    }
+
+    function loadCustOrdersLocal(uid) {
+      try {
+        const localOrdersStr = localStorage.getItem("aquatica_orders");
+        let orders = [];
+        if (localOrdersStr) {
+          const allOrders = JSON.parse(localOrdersStr);
+          orders = allOrders.filter(order => order.customerUid === uid);
+        }
+        orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        renderCustOrdersTable(orders);
+      } catch (e) {
+        console.error(e);
+        renderCustOrdersTable([]);
+      }
+    }
+
+    function renderCustOrdersTable(orders) {
+      const tableWrapper = document.getElementById("cust-table-wrapper");
+      const emptyWrapper = document.getElementById("cust-empty-wrapper");
+      const tbody = document.getElementById("cust-orders-tbody");
+
+      if (!orders || orders.length === 0) {
+        tableWrapper.style.display = "none";
+        emptyWrapper.style.display = "block";
+        return;
+      }
+
+      emptyWrapper.style.display = "none";
+      tableWrapper.style.display = "block";
+      tbody.innerHTML = "";
+
+      orders.forEach((order) => {
+        const tr = document.createElement("tr");
+        
+        // ID
+        const orderIdShort = order.id ? (order.id.length > 10 ? order.id.substring(0, 8) + "..." : order.id) : "MỚI";
+        const orderIdCell = `<td><span class="order-id-label" title="${order.id || ''}">${orderIdShort}</span></td>`;
+        
+        // Ngày
+        const dateObj = new Date(order.createdAt);
+        const formattedDate = isNaN(dateObj.getTime()) 
+          ? "Không rõ" 
+          : `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}/${dateObj.getFullYear()} ${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+        const dateCell = `<td>${formattedDate}</td>`;
+
+        // Nhận hàng
+        const shippingCell = `<td>
+          <div class="shipping-details-info">
+            <strong>${escapeHTML(order.customerName)}</strong><br>
+            SĐT: ${escapeHTML(order.customerPhone)}<br>
+            Đ/C: ${escapeHTML(order.customerAddress)}
+          </div>
+        </td>`;
+
+        // Sản phẩm
+        let itemsHtml = '<ul class="order-items-list">';
+        if (order.items && Array.isArray(order.items)) {
+          order.items.forEach(item => {
+            const subtotal = item.price * item.qty;
+            itemsHtml += `<li>${escapeHTML(item.name)} <strong>x${item.qty}</strong> (${subtotal.toLocaleString('vi-VN')}đ)</li>`;
+          });
+        }
+        itemsHtml += '</ul>';
+        const itemsCell = `<td>${itemsHtml}</td>`;
+
+        // Tổng
+        const totalCell = `<td><span class="order-price-val">${(order.totalPrice || 0).toLocaleString('vi-VN')}đ</span></td>`;
+
+        // Trạng thái
+        let statusClass = "pending";
+        let statusText = "Chờ duyệt";
+        
+        if (order.status === "completed" || order.status === "approved" || order.status === "approve") {
+          statusClass = "completed";
+          statusText = "Đã duyệt";
+        } else if (order.status === "cancelled" || order.status === "cancel") {
+          statusClass = "cancelled";
+          statusText = "Đã hủy";
+        }
+        const statusCell = `<td><span class="status-pill ${statusClass}">${statusText}</span></td>`;
+
+        tr.innerHTML = orderIdCell + dateCell + shippingCell + itemsCell + totalCell + statusCell;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return str.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // 7. Đăng xuất Khách hàng
+    window.handleCustomerLogout = function() {
+      const confirmLogout = confirm("Bạn có chắc chắn muốn đăng xuất không?");
+      if (!confirmLogout) return;
+
+      if (window.isFirebaseConfigured && auth) {
+        auth.signOut()
+          .then(() => {
+            localStorage.removeItem("aquatica_mock_user");
+            showToast("Đã đăng xuất tài khoản.");
+            setTimeout(() => {
+              window.location.reload();
+            }, 800);
+          })
+          .catch((err) => {
+            console.error(err);
+            localStorage.removeItem("aquatica_mock_user");
+            window.location.reload();
+          });
+      } else {
+        localStorage.removeItem("aquatica_mock_user");
+        showToast("Đã đăng xuất tài khoản giả lập.");
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+      }
+    };
+
+    // 8. Đăng xuất Admin (gọi lại reload để kích hoạt view login)
+    window.handleAdminLogout = function() {
+      const confirmLogout = confirm("Bạn có chắc chắn muốn đăng xuất quyền quản trị không?");
+      if (!confirmLogout) return;
+      
+      sessionStorage.removeItem("aquatica_admin_logged_in");
+      showToast("Đã đăng xuất quyền quản trị.");
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
+    };
 
     // Tiện ích Toast
     function showToast(message, type = 'success') {

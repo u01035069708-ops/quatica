@@ -40,9 +40,14 @@ Website đã được tích hợp sẵn cơ chế **Giả lập cục bộ (Offl
 3. **Đăng nhập Google**:
    - Chọn nhà cung cấp **Google**, gạt nút **Enable** (Kích hoạt).
    - Điền email hỗ trợ dự án và nhấn **Save**.
-4. **Đăng nhập Facebook** (Tùy chọn):
-   - Chọn nhà cung cấp **Facebook**, gạt nút **Enable**.
-   - Bạn cần điền *App ID* và *App Secret* lấy từ trang đăng ký nhà phát triển [Meta for Developers](https://developers.facebook.com/). Nếu chỉ cần kiểm tra nhanh, bạn chỉ cần kích hoạt Google là đủ.
+4. **Đăng nhập Facebook**:
+   - Để tích hợp Facebook Login hoạt động thực tế, bạn cần thực hiện cấu hình liên kết giữa **Meta (Facebook) Developers** và **Firebase**:
+     - **Bước A (Tạo App trên Meta)**: Truy cập trang [Meta for Developers](https://developers.facebook.com/), đăng nhập và nhấp **My Apps** -> **Create App**. Chọn mục tiêu phù hợp (ví dụ: *Consumer* hoặc *Authenticate users using Facebook Login*), đặt tên ứng dụng (ví dụ: `Nam Cá Cảnh`) và tạo App.
+     - **Bước B (Lấy App Credentials)**: Trong trang dashboard ứng dụng của Meta, đi tới **Settings** -> **Basic** ở cột bên trái. Tại đây, bạn sẽ thấy **App ID** và **App Secret** (nhấp "Show" để hiển thị). Sao chép hai mã này.
+     - **Bước C (Kích hoạt trên Firebase)**: Quay lại Firebase Console -> Authentication -> Sign-in Method, nhấp **Add new provider** và chọn **Facebook**. Gạt nút kích hoạt, sau đó dán **App ID** và **App Secret** vừa sao chép ở trên vào các ô tương ứng.
+     - **Bước D (Cấu hình Redirect URI)**: Tại hộp cấu hình Facebook của Firebase, hệ thống sẽ cung cấp cho bạn một đường dẫn gọi là **OAuth redirect URI** (dạng `https://ten-du-an.firebaseapp.com/__/auth/handler`). Hãy **sao chép** đường dẫn này. Nhấn **Save** trên Firebase.
+     - **Bước E (Dán Redirect URI vào Meta)**: Quay lại trang Meta for Developers, ở menu bên trái nhấp chọn **Add Product** (hoặc dấu cộng cạnh Products) -> Chọn **Facebook Login** và bấm **Set Up**. Chọn nền tảng là **Web**, nhập URL trang web của bạn (ví dụ `https://ten-github.github.io/cacanh/` hoặc `http://localhost:5500` để chạy thử local). Tiếp theo, tại menu bên trái, nhấp vào **Facebook Login** -> **Settings**. Tìm trường **Valid OAuth Redirect URIs** (URI chuyển hướng OAuth hợp lệ) và dán đường dẫn redirect URI đã sao chép từ Firebase vào đó. Nhấp **Save Changes** ở cuối trang.
+     - **Bước F (Chuyển App sang Live)**: Ở thanh menu trên cùng của Meta Developers console, gạt nút chuyển đổi chế độ App từ **Development** sang **Live** để tất cả người dùng bình thường đều có thể đăng nhập được (nếu để Development, chỉ có tài khoản developer của bạn mới đăng nhập được).
 
 ### Bước 4: Lấy Thông Tin Cấu Hình Nhập Vào Website
 1. Nhấp vào biểu tượng hình bánh răng ở góc trên bên trái menu (Project settings).
