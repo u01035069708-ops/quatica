@@ -107,7 +107,21 @@ document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
   initCart();
   setupUserAuthListener();
+  setupMobileMenuCloseListener();
 });
+
+// Đóng mobile menu khi click chọn link
+function setupMobileMenuCloseListener() {
+  const navLinks = document.querySelectorAll(".nav-menu.collapsible .nav-link");
+  navLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      const navMenu = document.querySelector(".nav-menu.collapsible");
+      if (navMenu && navMenu.classList.contains("open")) {
+        toggleMobileMenu();
+      }
+    });
+  });
+}
 
 // Khởi tạo Firebase
 function initFirebase() {
@@ -672,4 +686,20 @@ window.showToast = function(message, type = 'success') {
       }
     }, 300);
   }, 3500);
+};
+
+// Điều khiển đóng mở Mobile Menu
+window.toggleMobileMenu = function() {
+  const navMenu = document.querySelector(".nav-menu.collapsible");
+  const menuIcon = document.querySelector(".menu-toggle-btn i");
+  if (navMenu) {
+    navMenu.classList.toggle("open");
+    if (menuIcon) {
+      if (navMenu.classList.contains("open")) {
+        menuIcon.className = "fa-solid fa-xmark";
+      } else {
+        menuIcon.className = "fa-solid fa-bars";
+      }
+    }
+  }
 };

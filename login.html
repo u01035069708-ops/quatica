@@ -122,6 +122,10 @@
 
       googleBtn.addEventListener("click", () => {
         if (window.isFirebaseConfigured && auth) {
+          if (window.location.protocol === 'file:') {
+            showToast("Đăng nhập Google không hỗ trợ chạy trực tiếp file://. Hãy chạy bằng Live Server (localhost) hoặc đưa lên GitHub Pages!", "error");
+            return;
+          }
           const provider = new firebase.auth.GoogleAuthProvider();
           auth.signInWithPopup(provider)
             .then((result) => {
@@ -132,7 +136,11 @@
             })
             .catch((err) => {
               console.error(err);
-              showToast("Lỗi đăng nhập Google: " + err.message, "error");
+              if (err.code === 'auth/unauthorized-domain') {
+                showToast("Miền này chưa được cấp phép trong Firebase Console (Authorized Domains)!", "error");
+              } else {
+                showToast("Lỗi đăng nhập Google: " + err.message, "error");
+              }
             });
         } else {
           // Giả lập đăng nhập bằng Google
@@ -142,6 +150,10 @@
 
       facebookBtn.addEventListener("click", () => {
         if (window.isFirebaseConfigured && auth) {
+          if (window.location.protocol === 'file:') {
+            showToast("Đăng nhập Facebook không hỗ trợ chạy trực tiếp file://. Hãy chạy bằng Live Server hoặc đưa lên GitHub Pages!", "error");
+            return;
+          }
           const provider = new firebase.auth.FacebookAuthProvider();
           auth.signInWithPopup(provider)
             .then((result) => {
@@ -152,7 +164,11 @@
             })
             .catch((err) => {
               console.error(err);
-              showToast("Lỗi đăng nhập Facebook: " + err.message, "error");
+              if (err.code === 'auth/unauthorized-domain') {
+                showToast("Miền này chưa được cấp phép trong Firebase Console (Authorized Domains)!", "error");
+              } else {
+                showToast("Lỗi đăng nhập Facebook: " + err.message, "error");
+              }
             });
         } else {
           // Giả lập đăng nhập bằng Facebook

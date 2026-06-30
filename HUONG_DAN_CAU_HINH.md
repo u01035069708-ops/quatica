@@ -127,3 +127,39 @@ Bạn có thể quản lý sản phẩm và đơn hàng thông qua trang quản 
   - Nút **+ Thêm Sản Phẩm Mới** hiển thị popup để nhập tên, giá, số lượng, mô tả sản phẩm.
   - Nút **Chỉnh sửa** hình bút chì giúp sửa đổi thông số sản phẩm đang có.
   - Nút **Xóa** hình thùng rác để gỡ bỏ sản phẩm khỏi cửa hàng.
+
+---
+
+## PHẦN 3: CẤU HÌNH TÊN MIỀN RIÊNG (CUSTOM DOMAIN) `namquatica.com`
+
+Để chuyển hướng website chạy trên GitHub Pages từ tên miền mặc định (ví dụ: `hoang.github.io/cacanh`) thành tên miền riêng của bạn là **`namquatica.com`**, hãy làm theo 3 bước sau:
+
+### Bước 1: Cấu hình DNS tại Nhà cung cấp Tên miền (Domain Registrar)
+Đăng nhập vào trang quản trị tên miền nơi bạn mua `namquatica.com` (ví dụ: Mắt Bão, Nhân Hòa, GoDaddy, Cloudflare...) và thêm các bản ghi (DNS Records) sau:
+
+1. **Cấu hình trỏ tên miền chính (`namquatica.com`) về server của GitHub:**
+   Thêm **4 bản ghi A** với thông số như sau (Ký tự `@` đại diện cho tên miền chính):
+   * **Loại**: `A` | **Tên (Host)**: `@` | **Giá trị (Points to)**: `185.199.108.153`
+   * **Loại**: `A` | **Tên (Host)**: `@` | **Giá trị (Points to)**: `185.199.109.153`
+   * **Loại**: `A` | **Tên (Host)**: `@` | **Giá trị (Points to)**: `185.199.110.153`
+   * **Loại**: `A` | **Tên (Host)**: `@` | **Giá trị (Points to)**: `185.199.111.153`
+
+2. **Cấu hình trỏ tên miền phụ `www.namquatica.com` về tên miền phụ mặc định của bạn:**
+   Thêm **1 bản ghi CNAME** để khi người dùng gõ `www.namquatica.com` thì tự chuyển hướng đúng:
+   * **Loại**: `CNAME` | **Tên (Host)**: `www` | **Giá trị (Points to)**: `TÊN_TÀI_KHOẢN_GITHUB.github.io`
+   *(Thay thế `TÊN_TÀI_KHOẢN_GITHUB` bằng username GitHub của bạn).*
+
+### Bước 2: Thiết lập tên miền trên GitHub Pages
+1. Truy cập vào Repository của bạn trên GitHub.
+2. Chọn **Settings** -> **Pages** (ở cột bên trái).
+3. Tìm mục **Custom domain** (Tên miền riêng).
+4. Điền tên miền của bạn: `namquatica.com` vào ô nhập liệu.
+5. Nhấn **Save**.
+   * *GitHub sẽ tự động kiểm tra xem bạn đã trỏ DNS đúng chưa. Quá trình kiểm tra DNS (DNS propagation) có thể diễn ra từ vài phút tới tối đa 24 giờ tùy nhà đăng ký.*
+   * *Đồng thời, GitHub sẽ tự động tạo một tệp tin tên là `CNAME` chứa nội dung `namquatica.com` ở thư mục gốc của repository của bạn.*
+
+### Bước 3: Kích hoạt HTTPS (Bảo mật SSL)
+1. Cũng tại mục **Settings** -> **Pages** sau khi nhấn Save tên miền.
+2. Đợi cho DNS check thành công (nút báo xanh lá).
+3. Tích chọn vào ô **Enforce HTTPS** để kích hoạt chứng chỉ bảo mật SSL miễn phí của GitHub (giúp trang web có giao diện khóa an toàn `https://namquatica.com`).
+
