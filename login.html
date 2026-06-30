@@ -830,8 +830,10 @@
     function handleMockLogin(displayName) {
       showToast("Đang giả lập đăng nhập...", "warning");
       
+      // Tạo mock UID cố định theo tên đăng ký để lưu và hiển thị đúng lịch sử đơn hàng của tài khoản đó
+      const stableId = displayName.toLowerCase().replace(/[^a-z0-9]/g, "-");
       const mockUser = {
-        uid: "mock-uid-" + Date.now(),
+        uid: "mock-uid-" + stableId,
         displayName: displayName,
         email: displayName.includes("@") ? displayName : displayName + "@namcacanh.vn",
         photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100",
