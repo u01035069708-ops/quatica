@@ -49,7 +49,7 @@ Website đã được tích hợp sẵn cơ chế **Giả lập cục bộ (Offl
 2. Tại tab **General**, cuộn xuống phần **Your apps** và nhấp vào biểu tượng Web `</>` (dấu lớn dấu bé).
 3. Đăng ký tên ứng dụng (ví dụ: `aquatica-web`), sau đó nhấn **Register app**.
 4. Firebase sẽ hiển thị đoạn mã cấu hình. Tìm đối tượng `const firebaseConfig = { ... }`.
-5. Hãy sao chép nội dung cấu hình này và dán đè vào file `firebase-config.js` trong thư mục code của bạn:
+5. Hãy sao chép nội dung cấu hình này và dán đè vào file `firebase-db-config.js` trong thư mục code của bạn:
    ```javascript
    const firebaseConfig = {
      apiKey: "MÃ_API_KEY_CỦA_BẠN",
