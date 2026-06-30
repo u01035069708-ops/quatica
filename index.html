@@ -131,6 +131,15 @@
     </div>
   </aside>
 
+  <!-- Product Details Modal -->
+  <div class="modal-overlay" id="product-detail-overlay" onclick="toggleProductDetailModal(false)"></div>
+  <div class="product-detail-modal" id="product-detail-modal">
+    <button class="product-detail-close" onclick="toggleProductDetailModal(false)" aria-label="Đóng chi tiết sản phẩm">&times;</button>
+    <div class="product-detail-content" id="product-detail-content">
+      <!-- Nội dung chi tiết sản phẩm sẽ được inject qua JavaScript -->
+    </div>
+  </div>
+
   <!-- Toast Message Box -->
   <div class="toast-container" id="toast-container"></div>
 
