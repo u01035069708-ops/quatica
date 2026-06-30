@@ -2148,3 +2148,48 @@ footer {
     font-size: 24px;
   }
 }
+
+/* Device Order Lookup Button in Header */
+.device-orders-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(0, 141, 218, 0.04);
+  border: 1px solid rgba(0, 141, 218, 0.12);
+  color: var(--primary);
+  padding: 8px 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-right: 12px;
+}
+
+.device-orders-btn:hover {
+  background-color: rgba(0, 141, 218, 0.08);
+  color: var(--primary-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 92, 138, 0.05);
+}
+
+.device-orders-btn i {
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .device-orders-btn {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .device-orders-btn span {
+    display: none; /* Hide text on small screens, keep icon only */
+  }
+  .device-orders-btn {
+    padding: 8px 10px;
+    margin-right: 6px;
+  }
+}

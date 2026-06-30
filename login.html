@@ -331,6 +331,13 @@
           </div>
           <button type="submit" class="login-submit-btn">Đăng Nhập</button>
         </form>
+        
+        <!-- Đường dẫn xem đơn hàng vãng lai cục bộ -->
+        <div style="margin-top: 25px; text-align: center; font-size: 14px; border-top: 1px dashed rgba(0, 92, 138, 0.1); padding-top: 20px;">
+          <a href="#" onclick="showDeviceOrdersView(event)" style="color: var(--primary); font-weight: 600; text-decoration: none;">
+            <i class="fa-solid fa-clock-rotate-left"></i> Xem đơn hàng vãng lai đã đặt trên máy này
+          </a>
+        </div>
       </div>
     </main>
   </div>
@@ -683,6 +690,18 @@
 
     // 3. Kiểm tra Session hiện tại và hiển thị View đúng
     function checkAuthAndShowView() {
+      // Kiểm tra tham số URL xem có yêu cầu hiển thị đơn hàng thiết bị vãng lai không
+      const urlParams = new URLSearchParams(window.location.search);
+      const viewParam = urlParams.get('view');
+      if (viewParam === 'guest-orders') {
+        // Xóa tham số query khỏi thanh URL để tránh lỗi kẹt chế độ khi reload
+        window.history.replaceState({}, document.title, window.location.pathname);
+        if (window.showDeviceOrdersView) {
+          window.showDeviceOrdersView();
+        }
+        return;
+      }
+
       // Ưu tiên kiểm tra quyền Admin trước
       const isAdminLoggedIn = sessionStorage.getItem("aquatica_admin_logged_in") === "true";
       if (isAdminLoggedIn) {
@@ -851,7 +870,7 @@
     }
 
     // 6. Quản lý Dashboard Khách hàng
-    function renderCustProfile(user) {
+    function renderCustProfile(user, isGuestMode = false) {
       document.getElementById("cust-avatar").src = user.photoURL;
       document.getElementById("cust-display-name").textContent = user.displayName;
       document.getElementById("cust-email").textContent = user.email;
@@ -860,24 +879,70 @@
       const statusIcon = document.getElementById("cust-conn-status");
       
       if (window.isFirebaseConfigured) {
-        sysMode.textContent = "Firebase Online";
+        sysMode.textContent = isGuestMode ? "Thiết bị vãng lai" : "Firebase Online";
         sysMode.style.color = "var(--success)";
         
         statusIcon.style.backgroundColor = "rgba(16, 185, 129, 0.12)";
         statusIcon.style.color = "var(--success)";
         statusIcon.innerHTML = `<i class="fa-solid fa-cloud"></i> Firebase`;
       } else {
-        sysMode.textContent = "Offline Storage";
+        sysMode.textContent = isGuestMode ? "Thiết bị vãng lai" : "Offline Storage";
         sysMode.style.color = "var(--warning)";
         
         statusIcon.style.backgroundColor = "rgba(245, 158, 11, 0.12)";
         statusIcon.style.color = "var(--warning)";
         statusIcon.innerHTML = `<i class="fa-solid fa-server"></i> Offline`;
       }
+
+      // Đổi nút đăng xuất thành quay lại nếu đang xem chế độ khách vãng lai
+      const profileActions = document.querySelector(".profile-actions");
+      if (isGuestMode) {
+        profileActions.innerHTML = `
+          <button class="btn-block btn-home" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-cart-shopping"></i> Mua Sắm Cá Cảnh
+          </button>
+          <button class="btn-block btn-logout" onclick="exitGuestView()" style="background: rgba(0, 141, 218, 0.08); color: var(--primary);">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại đăng nhập
+          </button>
+        `;
+      } else {
+        profileActions.innerHTML = `
+          <button class="btn-block btn-home" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-cart-shopping"></i> Mua Sắm Cá Cảnh
+          </button>
+          <button class="btn-block btn-logout" onclick="handleCustomerLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i> Đăng Xuất
+          </button>
+        `;
+      }
     }
 
-    function loadCustOrdersFirebase(uid) {
+    function loadCustOrdersFirebase(uid, isGuestMode = false) {
       if (!mainDb) return;
+      
+      if (isGuestMode) {
+        const ids = JSON.parse(localStorage.getItem("aquatica_device_order_ids") || "[]");
+        if (ids.length === 0) {
+          renderCustOrdersTable([]);
+          return;
+        }
+        // Firestore limits "in" query to 10 items
+        const queryIds = ids.slice(-10);
+        mainDb.collection("orders")
+          .where(firebase.firestore.FieldPath.documentId(), "in", queryIds)
+          .onSnapshot((snapshot) => {
+            const orders = [];
+            snapshot.forEach((doc) => {
+              orders.push({ id: doc.id, ...doc.data() });
+            });
+            orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            renderCustOrdersTable(orders);
+          }, (error) => {
+            console.error("Lỗi Firestore vãng lai:", error);
+            loadCustOrdersLocal(null, true);
+          });
+        return;
+      }
       
       mainDb.collection("orders")
         .where("customerUid", "==", uid)
@@ -895,13 +960,18 @@
         });
     }
 
-    function loadCustOrdersLocal(uid) {
+    function loadCustOrdersLocal(uid, isGuestMode = false) {
       try {
         const localOrdersStr = localStorage.getItem("aquatica_orders");
         let orders = [];
         if (localOrdersStr) {
           const allOrders = JSON.parse(localOrdersStr);
-          orders = allOrders.filter(order => order.customerUid === uid);
+          if (isGuestMode) {
+            const ids = JSON.parse(localStorage.getItem("aquatica_device_order_ids") || "[]");
+            orders = allOrders.filter(order => ids.includes(order.id));
+          } else {
+            orders = allOrders.filter(order => order.customerUid === uid);
+          }
         }
         orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         renderCustOrdersTable(orders);
@@ -1017,6 +1087,30 @@
           window.location.reload();
         }, 800);
       }
+    };
+
+    // 7.1. Chức năng xem đơn hàng vãng lai cục bộ
+    window.showDeviceOrdersView = function(e) {
+      if (e) e.preventDefault();
+      
+      const guestUser = {
+        displayName: "Khách Vãng Lai",
+        email: "Đơn hàng trên thiết bị này",
+        photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100" // generic guest avatar
+      };
+      
+      showView('customer');
+      renderCustProfile(guestUser, true);
+      
+      if (window.isFirebaseConfigured && mainDb) {
+        loadCustOrdersFirebase(null, true);
+      } else {
+        loadCustOrdersLocal(null, true);
+      }
+    };
+
+    window.exitGuestView = function() {
+      showView('login');
     };
 
     // 8. Đăng xuất Admin (gọi lại reload để kích hoạt view login)

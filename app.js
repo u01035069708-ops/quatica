@@ -403,6 +403,7 @@ function initCart() {
     shoppingCart = JSON.parse(localCart);
   }
   updateCartUI();
+  fillGuestCheckoutInfo();
 }
 
 window.toggleCart = function(isOpen) {
@@ -556,6 +557,12 @@ window.handleCheckout = async function() {
     showToast("Vui lòng điền đầy đủ Họ tên, SĐT và Địa chỉ giao hàng!", "error");
     return;
   }
+
+  // Lưu thông tin khách vãng lai để tự động điền lần sau
+  const isCustomerLoggedIn = localStorage.getItem("aquatica_mock_user") !== null || (auth && auth.currentUser !== null);
+  if (!isCustomerLoggedIn) {
+    localStorage.setItem("aquatica_guest_info", JSON.stringify({ name, phone, address }));
+  }
   
   // Tạo đơn hàng mới
   let customerUid = null;
@@ -593,6 +600,9 @@ window.handleCheckout = async function() {
       // Thêm vào Firestore
       const docRef = await db.collection("orders").add(newOrder);
       
+      // Lưu lại mã đơn hàng trên thiết bị này (Cho khách vãng lai)
+      saveDeviceOrderId(docRef.id);
+      
       // Trừ bớt số lượng sản phẩm trong kho trên Firestore
       const batch = db.batch();
       for (const item of shoppingCart) {
@@ -623,6 +633,9 @@ window.handleCheckout = async function() {
       newOrder.id = "ord-" + Date.now();
       localOrders.push(newOrder);
       localStorage.setItem("aquatica_orders", JSON.stringify(localOrders));
+      
+      // Lưu lại mã đơn hàng trên thiết bị này (Cho khách vãng lai)
+      saveDeviceOrderId(newOrder.id);
       
       // Cập nhật số lượng sản phẩm local
       const localProds = JSON.parse(localStorage.getItem("aquatica_products") || "[]");
@@ -655,10 +668,8 @@ function clearCart() {
   saveCart();
   updateCartUI();
   
-  // Xóa các trường checkout
-  document.getElementById("checkout-name").value = "";
-  document.getElementById("checkout-phone").value = "";
-  document.getElementById("checkout-address").value = "";
+  // Nạp lại thông tin khách vãng lai đã đặt hoặc xóa trắng nếu không có
+  fillGuestCheckoutInfo();
 }
 
 // ----------------------------------------------------
@@ -953,3 +964,47 @@ document.addEventListener("keydown", (e) => {
     toggleCart(false);
   }
 });
+
+// Lưu mã đơn hàng đã đặt trên thiết bị này
+function saveDeviceOrderId(orderId) {
+  try {
+    let ids = JSON.parse(localStorage.getItem("aquatica_device_order_ids") || "[]");
+    if (!ids.includes(orderId)) {
+      ids.push(orderId);
+      localStorage.setItem("aquatica_device_order_ids", JSON.stringify(ids));
+    }
+  } catch (e) {
+    console.error("Lỗi lưu ID đơn hàng vào thiết bị:", e);
+  }
+}
+
+// Tự động điền thông tin khách vãng lai đã lưu
+function fillGuestCheckoutInfo() {
+  // Chỉ tự động điền nếu người dùng CHƯA đăng nhập tài khoản chính thức (nếu đã đăng nhập, thông tin điền từ profile)
+  const isCustomerLoggedIn = localStorage.getItem("aquatica_mock_user") !== null || (auth && auth.currentUser !== null);
+  if (isCustomerLoggedIn) return;
+
+  try {
+    const guestInfoStr = localStorage.getItem("aquatica_guest_info");
+    if (guestInfoStr) {
+      const guestInfo = JSON.parse(guestInfoStr);
+      const checkoutName = document.getElementById("checkout-name");
+      const checkoutPhone = document.getElementById("checkout-phone");
+      const checkoutAddress = document.getElementById("checkout-address");
+      
+      if (checkoutName && guestInfo.name) checkoutName.value = guestInfo.name;
+      if (checkoutPhone && guestInfo.phone) checkoutPhone.value = guestInfo.phone;
+      if (checkoutAddress && guestInfo.address) checkoutAddress.value = guestInfo.address;
+    } else {
+      // Xóa trắng nếu không có dữ liệu lưu
+      const checkoutName = document.getElementById("checkout-name");
+      const checkoutPhone = document.getElementById("checkout-phone");
+      const checkoutAddress = document.getElementById("checkout-address");
+      if (checkoutName) checkoutName.value = "";
+      if (checkoutPhone) checkoutPhone.value = "";
+      if (checkoutAddress) checkoutAddress.value = "";
+    }
+  } catch (e) {
+    console.error("Lỗi tự động điền thông tin khách vãng lai:", e);
+  }
+}
