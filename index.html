@@ -58,12 +58,29 @@
       <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm cá cảnh, phụ kiện, lọc nước, cây thủy sinh...">
       <button class="search-btn" onclick="handleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
     </div>
-    <div class="category-tags" id="category-filters">
-      <button class="cat-btn active" onclick="filterCategory('all', this)">Tất cả</button>
-      <button class="cat-btn" onclick="filterCategory('ca-canh', this)">Cá cảnh</button>
-      <button class="cat-btn" onclick="filterCategory('cay-thuy-sinh', this)">Cây thủy sinh</button>
-      <button class="cat-btn" onclick="filterCategory('bom-loc', this)">Bơm & Lọc nước</button>
-      <button class="cat-btn" onclick="filterCategory('phu-kien', this)">Phụ kiện khác</button>
+    <div class="filter-options-row">
+      <div class="category-tags" id="category-filters">
+        <button class="cat-btn active" onclick="filterCategory('all', this)">Tất cả</button>
+        <button class="cat-btn" onclick="filterCategory('ca-canh', this)">Cá cảnh</button>
+        <button class="cat-btn" onclick="filterCategory('cay-thuy-sinh', this)">Cây thủy sinh</button>
+        <button class="cat-btn" onclick="filterCategory('bom-loc', this)">Bơm & Lọc nước</button>
+        <button class="cat-btn" onclick="filterCategory('phu-kien', this)">Phụ kiện khác</button>
+      </div>
+      
+      <div class="sort-wrapper">
+        <label for="sort-select" class="sort-label">
+          <i class="fa-solid fa-arrow-down-wide-short"></i> Sắp xếp:
+        </label>
+        <select id="sort-select" class="sort-select" onchange="handleSortChange(this.value)">
+          <option value="default">Mặc định (A - Z)</option>
+          <option value="price-asc">Giá: Thấp đến Cao</option>
+          <option value="price-desc">Giá: Cao đến Thấp</option>
+          <option value="stock-desc">Tồn kho: Nhiều đến Ít</option>
+          <option value="stock-asc">Tồn kho: Ít đến Nhiều</option>
+          <option value="name-asc">Tên: A - Z</option>
+          <option value="name-desc">Tên: Z - A</option>
+        </select>
+      </div>
     </div>
   </section>
 

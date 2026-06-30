@@ -286,6 +286,8 @@ function renderProducts(productsList) {
     else if (prod.category === 'bom-loc') catLabel = "Bơm & Lọc";
     else if (prod.category === 'phu-kien') catLabel = "Phụ kiện";
 
+    const unit = prod.category === 'ca-canh' ? 'đôi' : 'cái';
+
     const card = document.createElement("div");
     card.className = "product-card";
     card.innerHTML = `
@@ -297,7 +299,7 @@ function renderProducts(productsList) {
       <div class="product-info">
         <span class="product-cat">${catLabel}</span>
         <h3 class="product-name" title="${prod.name}">${prod.name}</h3>
-        <p class="product-stock-qty">Kho còn lại: <strong>${prod.quantity}</strong> sản phẩm</p>
+        <p class="product-stock-qty">Kho còn lại: <strong>${prod.quantity}</strong> ${unit}</p>
         <div class="product-footer">
           <span class="product-price">${priceFormatted}</span>
           <button class="add-cart-btn ${isOutOfStock ? 'disabled' : ''}" 
@@ -318,6 +320,7 @@ function renderProducts(productsList) {
 // ----------------------------------------------------
 let activeCategory = 'all';
 let searchQuery = '';
+let currentSortRule = 'default';
 
 window.filterCategory = function(category, element) {
   // Cập nhật giao diện nút
@@ -335,6 +338,11 @@ window.handleSearch = function() {
   applyFilters();
 };
 
+window.handleSortChange = function(value) {
+  currentSortRule = value;
+  applyFilters();
+};
+
 // Nhấn Enter để tìm kiếm
 document.getElementById("search-input")?.addEventListener("keypress", (e) => {
   if (e.key === 'Enter') {
@@ -343,7 +351,7 @@ document.getElementById("search-input")?.addEventListener("keypress", (e) => {
 });
 
 function applyFilters() {
-  let filtered = currentProducts;
+  let filtered = [...currentProducts];
   
   if (activeCategory !== 'all') {
     filtered = filtered.filter(p => p.category === activeCategory);
@@ -354,6 +362,24 @@ function applyFilters() {
       p.name.toLowerCase().includes(searchQuery) || 
       (p.description && p.description.toLowerCase().includes(searchQuery))
     );
+  }
+  
+  // Áp dụng quy tắc sắp xếp
+  if (currentSortRule === 'price-asc') {
+    filtered.sort((a, b) => a.price - b.price);
+  } else if (currentSortRule === 'price-desc') {
+    filtered.sort((a, b) => b.price - a.price);
+  } else if (currentSortRule === 'stock-desc') {
+    filtered.sort((a, b) => b.quantity - a.quantity);
+  } else if (currentSortRule === 'stock-asc') {
+    filtered.sort((a, b) => a.quantity - b.quantity);
+  } else if (currentSortRule === 'name-asc') {
+    filtered.sort((a, b) => a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' }));
+  } else if (currentSortRule === 'name-desc') {
+    filtered.sort((a, b) => b.name.localeCompare(a.name, 'vi', { sensitivity: 'base' }));
+  } else {
+    // Mặc định: Sắp xếp theo tên A-Z
+    filtered.sort((a, b) => a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' }));
   }
   
   renderProducts(filtered);
@@ -429,7 +455,8 @@ window.changeCartQty = function(productId, delta) {
     shoppingCart = shoppingCart.filter(i => i.id !== productId);
     showToast("Đã xóa sản phẩm khỏi giỏ hàng.");
   } else if (newQty > maxLimit) {
-    showToast(`Chỉ còn lại ${maxLimit} sản phẩm trong kho!`, "warning");
+    const unit = product && product.category === 'ca-canh' ? 'đôi' : 'cái';
+    showToast(`Chỉ còn lại ${maxLimit} ${unit} trong kho!`, "warning");
     item.qty = maxLimit;
   } else {
     item.qty = newQty;

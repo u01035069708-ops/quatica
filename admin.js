@@ -351,6 +351,8 @@ function renderAdminProducts() {
     else if (prod.category === 'bom-loc') catLabel = "Bơm & Lọc";
     else if (prod.category === 'phu-kien') catLabel = "Phụ kiện";
 
+    const unit = prod.category === 'ca-canh' ? 'đôi' : 'cái';
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>
@@ -366,7 +368,7 @@ function renderAdminProducts() {
       </td>
       <td><span style="font-size: 13px; font-weight: 500;">${catLabel}</span></td>
       <td><strong>${formattedPrice}</strong></td>
-      <td><strong>${prod.quantity}</strong> cái</td>
+      <td><strong>${prod.quantity}</strong> ${unit}</td>
       <td><span class="status-pill ${stockClass}">${stockText}</span></td>
       <td>
         <div class="action-btn-group">
