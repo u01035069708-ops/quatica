@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Nhập Khách Hàng - Aquatica</title>
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+  <!-- Header Navigation (Simplified) -->
+  <header>
+    <div class="nav-container">
+      <a href="index.html" class="logo-section">
+        <div class="logo-icon"><i class="fa-solid fa-fish-fins"></i></div>
+        <span class="logo-text">Aquatica</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Login Area -->
+  <main class="login-container">
+    <div class="login-card">
+      <div class="logo-icon" style="margin: 0 auto 20px auto; width: 60px; height: 60px; font-size: 30px;"><i class="fa-solid fa-fish-fins"></i></div>
+      <h2>Chào Mừng Bạn Trở Lại</h2>
+      <p>Đăng nhập để nhận thông tin ưu đãi và lưu thông tin đặt hàng nhanh chóng hơn cho những lần sau.</p>
+      
+      <!-- Connection Status indicator -->
+      <div id="auth-status-indicator" style="margin-bottom: 20px; font-size: 13px; padding: 6px; border-radius: 6px;"></div>
+
+      <!-- Social Logins (Google & Facebook) -->
+      <div class="social-login-group">
+        <button class="social-btn google" id="google-login-btn">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
+          Đăng nhập bằng Google
+        </button>
+        <button class="social-btn facebook" id="facebook-login-btn">
+          <i class="fa-brands fa-facebook-f" style="font-size: 18px; margin-right: 5px;"></i>
+          Đăng nhập bằng Facebook
+        </button>
+      </div>
+
+      <div class="login-divider">
+        <span>Hoặc đăng nhập thông thường</span>
+      </div>
+
+      <!-- Simulated Standard Email / Password Form -->
+      <form class="login-form" onsubmit="handleStandardLogin(event)">
+        <div class="form-group">
+          <label for="email">Địa chỉ Email</label>
+          <input type="email" id="email" class="login-input" placeholder="ten-cua-ban@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" class="login-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="login-submit-btn">Đăng Nhập</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Toast Notification Box -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <!-- Firebase Config -->
+  <script src="firebase-config.js"></script>
+
+  <!-- Login Logic Script -->
+  <script>
+    let auth = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initFirebaseLogin();
+      setupLoginButtons();
+    });
+
+    function initFirebaseLogin() {
+      const indicator = document.getElementById("auth-status-indicator");
+      
+      if (window.isFirebaseConfigured) {
+        try {
+          firebase.initializeApp(window.firebaseConfig);
+          auth = firebase.auth();
+          
+          if (indicator) {
+            indicator.style.backgroundColor = "rgba(16, 185, 129, 0.12)";
+            indicator.style.color = "var(--success)";
+            indicator.innerHTML = `<i class="fa-solid fa-wifi"></i> Đã kết nối Firebase Auth chính thức.`;
+          }
+        } catch (e) {
+          console.error(e);
+          setupMockIndicator();
+        }
+      } else {
+        setupMockIndicator();
+      }
+    }
+
+    function setupMockIndicator() {
+      const indicator = document.getElementById("auth-status-indicator");
+      if (indicator) {
+        indicator.style.backgroundColor = "rgba(245, 158, 11, 0.12)";
+        indicator.style.color = "var(--warning)";
+        indicator.innerHTML = `<i class="fa-solid fa-circle-nodes"></i> Đang chạy giả lập Auth (Chưa cấu hình Firebase)`;
+      }
+    }
+
+    function setupLoginButtons() {
+      const googleBtn = document.getElementById("google-login-btn");
+      const facebookBtn = document.getElementById("facebook-login-btn");
+
+      googleBtn.addEventListener("click", () => {
+        if (window.isFirebaseConfigured && auth) {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          auth.signInWithPopup(provider)
+            .then((result) => {
+              showToast("Đăng nhập Google thành công!");
+              setTimeout(() => {
+                window.location.href = "index.html";
+              }, 1200);
+            })
+            .catch((err) => {
+              console.error(err);
+              showToast("Lỗi đăng nhập Google: " + err.message, "error");
+            });
+        } else {
+          // Giả lập đăng nhập bằng Google
+          handleMockLogin("Khách Hàng Google Giả Lập");
+        }
+      });
+
+      facebookBtn.addEventListener("click", () => {
+        if (window.isFirebaseConfigured && auth) {
+          const provider = new firebase.auth.FacebookAuthProvider();
+          auth.signInWithPopup(provider)
+            .then((result) => {
+              showToast("Đăng nhập Facebook thành công!");
+              setTimeout(() => {
+                window.location.href = "index.html";
+              }, 1200);
+            })
+            .catch((err) => {
+              console.error(err);
+              showToast("Lỗi đăng nhập Facebook: " + err.message, "error");
+            });
+        } else {
+          // Giả lập đăng nhập bằng Facebook
+          handleMockLogin("Khách Hàng Facebook Giả Lập");
+        }
+      });
+    }
+
+    // Đăng nhập email thông thường giả lập
+    window.handleStandardLogin = function(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const nickname = email.split("@")[0];
+      
+      if (window.isFirebaseConfigured && auth) {
+        // Sử dụng Firebase Auth thật nếu có cấu hình
+        const password = document.getElementById("password").value;
+        showToast("Đang kết nối Firebase Auth...", "warning");
+        auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            showToast("Đăng nhập thành công!");
+            setTimeout(() => { window.location.href = "index.html"; }, 1200);
+          })
+          .catch(err => {
+            // Nếu tài khoản chưa tồn tại, thử đăng ký tự động để tiện test
+            if (err.code === 'auth/user-not-found') {
+              showToast("Tài khoản chưa có, đang tự động đăng ký mới cho bạn...", "warning");
+              auth.createUserWithEmailAndPassword(email, password)
+                .then((cred) => {
+                  cred.user.updateProfile({ displayName: nickname });
+                  showToast("Đăng ký & đăng nhập thành công!");
+                  setTimeout(() => { window.location.href = "index.html"; }, 1200);
+                })
+                .catch(regErr => {
+                  showToast("Lỗi đăng ký: " + regErr.message, "error");
+                });
+            } else {
+              showToast("Lỗi đăng nhập: " + err.message, "error");
+            }
+          });
+      } else {
+        // Đăng nhập giả lập lưu vào local storage để index.html đọc ra
+        handleMockLogin(nickname);
+      }
+    };
+
+    function handleMockLogin(displayName) {
+      showToast("Đang giả lập đăng nhập...", "warning");
+      
+      // Tạo một mock user object lưu vào LocalStorage
+      const mockUser = {
+        uid: "mock-uid-" + Date.now(),
+        displayName: displayName,
+        email: "simulated_user@aquatica.vn",
+        photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100",
+        isMock: true
+      };
+      
+      // Chúng ta sẽ giả lập sự kiện onAuthStateChanged bằng cách cho app.js đọc đối tượng này.
+      // Do Firebase Auth thật lưu trong indexedDB, ta sẽ lưu mockUser này vào localStorage.
+      localStorage.setItem("aquatica_mock_user", JSON.stringify(mockUser));
+      
+      // Cập nhật app.js bằng cách ghi đè hoặc chỉnh sửa cơ chế lắng nghe của nó
+      // Ta sẽ viết logic đọc mock user này vào app.js
+      setTimeout(() => {
+        showToast("Đăng nhập giả lập thành công! Chào " + displayName);
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1000);
+      }, 1000);
+    }
+
+    // Tiện ích Toast
+    function showToast(message, type = 'success') {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+      
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      
+      let icon = '<i class="fa-solid fa-circle-check"></i>';
+      if (type === 'error') icon = '<i class="fa-solid fa-circle-exclamation"></i>';
+      else if (type === 'warning') icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
+      
+      toast.innerHTML = `${icon} <span>${message}</span>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'slideInLeft 0.3s reverse';
+        setTimeout(() => {
+          if (toast.parentNode === container) {
+            container.removeChild(toast);
+          }
+        }, 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

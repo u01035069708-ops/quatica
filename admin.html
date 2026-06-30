@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Quản Trị - Aquatica</title>
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+  <!-- Admin Login Form Container (Visible if not logged in) -->
+  <div id="admin-login-wrapper" class="login-container" style="display: none;">
+    <div class="login-card">
+      <div class="logo-icon" style="margin: 0 auto 20px auto; width: 60px; height: 60px; font-size: 30px;"><i class="fa-solid fa-lock"></i></div>
+      <h2>Quản Trị Viên Đăng Nhập</h2>
+      <p>Vui lòng đăng nhập bằng tài khoản quản lý để tiếp nhận đơn hàng và điều phối sản phẩm.</p>
+      
+      <!-- Account Hint -->
+      <div style="background-color: rgba(0, 92, 138, 0.08); padding: 10px; border-radius: 6px; font-size: 13px; color: var(--primary); text-align: left; margin-bottom: 20px;">
+        <i class="fa-solid fa-circle-info"></i> <strong>Tài khoản mặc định:</strong><br>
+        • Username: <code style="font-weight: bold; background: white; padding: 2px 5px;">admin</code><br>
+        • Password: <code style="font-weight: bold; background: white; padding: 2px 5px;">admin1234</code>
+      </div>
+
+      <form class="login-form" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label for="admin-username">Tên đăng nhập</label>
+          <input type="text" id="admin-username" class="login-input" placeholder="admin" required>
+        </div>
+        <div class="form-group">
+          <label for="admin-password">Mật khẩu bảo mật</label>
+          <input type="password" id="admin-password" class="login-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="login-submit-btn">Đăng Nhập Quản Trị</button>
+      </form>
+      <div style="margin-top: 20px; font-size: 14px;">
+        <a href="index.html" style="color: var(--primary);"><i class="fa-solid fa-arrow-left"></i> Trở lại cửa hàng</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Layout (Visible if logged in) -->
+  <div id="admin-dashboard-wrapper" class="admin-layout" style="display: none;">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-logo">
+        <i class="fa-solid fa-fish-fins"></i> Aquatica Admin
+      </div>
+      <ul class="admin-menu">
+        <li class="admin-menu-item">
+          <a class="admin-menu-link active" onclick="switchTab('orders', this)">
+            <i class="fa-solid fa-receipt"></i> Quản lý đơn hàng
+          </a>
+        </li>
+        <li class="admin-menu-item">
+          <a class="admin-menu-link" onclick="switchTab('products', this)">
+            <i class="fa-solid fa-boxes-stacked"></i> Quản lý sản phẩm
+          </a>
+        </li>
+        <li class="admin-menu-item" style="margin-top: 50px;">
+          <a href="index.html" class="admin-menu-link" style="color: var(--accent-soft);">
+            <i class="fa-solid fa-shop"></i> Xem trang chủ
+          </a>
+        </li>
+        <li class="admin-menu-item">
+          <a class="admin-menu-link" onclick="handleAdminLogout()" style="color: var(--danger);">
+            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      
+      <!-- Tab 1: Orders Section -->
+      <section id="tab-orders" class="admin-section active">
+        <div class="admin-header-actions">
+          <h2 class="admin-title">Tiếp Nhận Đơn Hàng</h2>
+          <div id="admin-orders-indicator" style="font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 5px;"></div>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="admin-stats-grid">
+          <div class="stat-card">
+            <span class="stat-card-title">Tổng số đơn</span>
+            <span class="stat-card-val" id="stat-total-orders">0</span>
+          </div>
+          <div class="stat-card orders-stat">
+            <span class="stat-card-title">Đơn chờ xử lý</span>
+            <span class="stat-card-val" id="stat-pending-orders" style="color: var(--warning);">0</span>
+          </div>
+          <div class="stat-card revenue-stat" style="border-left-color: var(--success);">
+            <span class="stat-card-title">Doanh thu dự kiến</span>
+            <span class="stat-card-val" id="stat-revenue" style="color: var(--success);">0đ</span>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã Đơn</th>
+                <th>Khách Hàng</th>
+                <th>Sản Phẩm Đặt</th>
+                <th>Tổng Tiền</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-tbody">
+              <!-- Orders data will be dynamically injected here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Tab 2: Products Section -->
+      <section id="tab-products" class="admin-section">
+        <div class="admin-header-actions">
+          <h2 class="admin-title">Danh Mục Sản Phẩm</h2>
+          <button class="btn btn-accent" onclick="openProductModal()" style="font-size: 14px; padding: 10px 20px; border-radius: 50px;">
+            <i class="fa-solid fa-plus" style="margin-right: 5px;"></i> Thêm Sản Phẩm Mới
+          </button>
+        </div>
+
+        <!-- Products Table -->
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Hình Ảnh</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Phân Loại</th>
+                <th>Đơn Giá</th>
+                <th>Số Lượng Kho</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="admin-products-tbody">
+              <!-- Products CRUD list will be injected here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- CRUD Product Form Modal (Add / Edit) -->
+  <div class="admin-modal" id="product-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Thêm Sản Phẩm Mới</h3>
+        <button class="close-cart-btn" onclick="closeProductModal()" style="font-size: 28px; line-height: 1;">&times;</button>
+      </div>
+      <form id="product-form" onsubmit="saveProduct(event)">
+        <div class="modal-body">
+          <div class="modal-form">
+            <input type="hidden" id="form-product-id">
+            
+            <div class="form-group">
+              <label for="form-name">Tên sản phẩm *</label>
+              <input type="text" id="form-name" class="modal-input" placeholder="Ví dụ: Cá Koi Nhật..." required>
+            </div>
+            
+            <div class="modal-row-2">
+              <div class="form-group">
+                <label for="form-category">Phân loại sản phẩm *</label>
+                <select id="form-category" class="modal-select" required>
+                  <option value="ca-canh">Cá cảnh</option>
+                  <option value="cay-thuy-sinh">Cây thủy sinh</option>
+                  <option value="bom-loc">Bơm & Lọc nước</option>
+                  <option value="phu-kien">Phụ kiện khác</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="form-price">Giá bán (VND) *</label>
+                <input type="number" id="form-price" class="modal-input" min="0" placeholder="Ví dụ: 150000" required>
+              </div>
+            </div>
+
+            <div class="modal-row-2">
+              <div class="form-group">
+                <label for="form-quantity">Số lượng nhập kho *</label>
+                <input type="number" id="form-quantity" class="modal-input" min="0" placeholder="Ví dụ: 20" required>
+              </div>
+              <div class="form-group">
+                <label for="form-status">Tình trạng hiển thị *</label>
+                <select id="form-status" class="modal-select" required>
+                  <option value="in-stock">Còn hàng (In stock)</option>
+                  <option value="out-of-stock">Hết hàng (Out of stock)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="form-image-url">Đường dẫn hình ảnh (URL Image)</label>
+              <input type="url" id="form-image-url" class="modal-input" placeholder="https://unsplash.com/...">
+              <span style="font-size: 11px; color: var(--text-muted);">
+                Nếu để trống, hệ thống sẽ tự động gán hình ảnh ngẫu nhiên theo danh mục.
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="form-description">Mô tả tóm tắt sản phẩm</label>
+              <textarea id="form-description" class="modal-input" rows="3" placeholder="Thông tin chi tiết về sản phẩm..." style="resize: vertical; font-family: inherit;"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" onclick="closeProductModal()" style="padding: 10px 20px;">Hủy Bỏ</button>
+          <button type="submit" class="btn btn-success" style="padding: 10px 25px;">Lưu Sản Phẩm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Box -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <!-- Firebase Config -->
+  <script src="firebase-config.js"></script>
+  <!-- Admin Script Logic -->
+  <script src="admin.js"></script>
+</body>
+</html>

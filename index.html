@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aquatica - Cửa Hàng Cá Cảnh & Phụ Kiện Cao Cấp</title>
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="index.html" class="logo-section">
+        <div class="logo-icon"><i class="fa-solid fa-fish-fins"></i></div>
+        <span class="logo-text">Aquatica</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link active">Trang Chủ</a></li>
+        <li><a href="#san-pham" class="nav-link">Sản Phẩm</a></li>
+        <li><a href="admin.html" class="nav-link">Trang Admin</a></li>
+        <li id="user-nav-item">
+          <a href="login.html" class="nav-link"><i class="fa-solid fa-user"></i> Đăng Nhập</a>
+        </li>
+      </ul>
+      <div class="cart-icon-btn" onclick="toggleCart(true)">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Giỏ hàng</span>
+        <div class="cart-badge" id="cart-count">0</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-tag">THẾ GIỚI THỦY SINH TỰ NHIÊN</span>
+      <h1>Mang Thiên Nhiên Đại Dương Vào Ngôi Nhà Bạn</h1>
+      <p>Aquatica cung cấp các dòng cá cảnh cao cấp, cây thủy sinh tươi khỏe cùng hệ thống lọc nước, phụ kiện chuyên nghiệp giúp nâng tầm không gian sống của bạn.</p>
+      <a href="#san-pham" class="hero-btn">Khám phá sản phẩm <i class="fa-solid fa-arrow-down" style="margin-left: 8px;"></i></a>
+    </div>
+    <!-- Decorative Wave SVG -->
+    <svg class="hero-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path d="M0,96L120,122.7C240,149,480,203,720,202.7C960,203,1200,149,1320,122.7L1440,96L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z"></path>
+    </svg>
+  </section>
+
+  <!-- Main Section: Search & Category Filters -->
+  <section class="filter-search-container">
+    <div class="search-box-wrapper">
+      <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm cá cảnh, phụ kiện, lọc nước, cây thủy sinh...">
+      <button class="search-btn" onclick="handleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+    <div class="category-tags" id="category-filters">
+      <button class="cat-btn active" onclick="filterCategory('all', this)">Tất cả</button>
+      <button class="cat-btn" onclick="filterCategory('ca-canh', this)">Cá cảnh</button>
+      <button class="cat-btn" onclick="filterCategory('cay-thuy-sinh', this)">Cây thủy sinh</button>
+      <button class="cat-btn" onclick="filterCategory('bom-loc', this)">Bơm & Lọc nước</button>
+      <button class="cat-btn" onclick="filterCategory('phu-kien', this)">Phụ kiện khác</button>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="products-section" id="san-pham">
+    <div class="section-title-wrapper">
+      <h2 class="section-title">Danh Sách Sản Phẩm</h2>
+      <span class="product-count-label" id="product-count-text">Đang tải sản phẩm...</span>
+    </div>
+    
+    <!-- Backend Connection Indicator -->
+    <div id="firebase-indicator" style="display:none; text-align: center; margin-bottom: 20px; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 600;"></div>
+
+    <div class="products-grid" id="products-container">
+      <!-- Products will be injected by JavaScript -->
+    </div>
+  </section>
+
+  <!-- Sliding Shopping Cart Sidebar -->
+  <div class="cart-overlay" id="cart-overlay" onclick="toggleCart(false)"></div>
+  <aside class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h2><i class="fa-solid fa-cart-shopping"></i> Giỏ Hàng</h2>
+      <button class="close-cart-btn" onclick="toggleCart(false)">&times;</button>
+    </div>
+    
+    <div class="cart-body" id="cart-items-container">
+      <!-- Cart items will be injected by JS -->
+    </div>
+
+    <!-- Checkout Details / Summary Form -->
+    <div class="cart-footer-form">
+      <div class="cart-summary">
+        <span>Tổng tiền:</span>
+        <span class="cart-total-price" id="cart-total-price">0đ</span>
+      </div>
+      
+      <div class="checkout-fields">
+        <input type="text" id="checkout-name" class="checkout-input" placeholder="Họ và tên khách hàng *" required>
+        <input type="tel" id="checkout-phone" class="checkout-input" placeholder="Số điện thoại liên lạc *" required>
+        <input type="text" id="checkout-address" class="checkout-input" placeholder="Địa chỉ giao nhận nhận hàng *" required>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">
+          (*) Thông tin bắt buộc để đặt hàng. Đặt hàng dạng khách vãng lai.
+        </div>
+      </div>
+      
+      <button class="checkout-btn" onclick="handleCheckout()">Đặt Hàng Ngay (Khách Vãng Lai)</button>
+    </div>
+  </aside>
+
+  <!-- Toast Message Box -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>Aquatica Aquarium</h3>
+        <p>Thành lập từ năm 2020, Aquatica tự hào là đơn vị cung cấp các giải pháp bể cá thủy sinh trọn gói và các dòng cá cảnh cao cấp nhập khẩu uy tín hàng đầu Việt Nam.</p>
+        <p><i class="fa-solid fa-location-dot"></i> 123 Đường Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh</p>
+        <p><i class="fa-solid fa-phone"></i> Hotline: 090 1234 567</p>
+      </div>
+      <div class="footer-col">
+        <h3>Liên Kết Nhanh</h3>
+        <ul class="footer-links">
+          <li><a href="#">Trang chủ</a></li>
+          <li><a href="#san-pham">Sản phẩm cá cảnh</a></li>
+          <li><a href="admin.html">Trang quản trị (Admin)</a></li>
+          <li><a href="login.html">Đăng nhập tài khoản</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Giờ Mở Cửa</h3>
+        <p>Thứ 2 - Chủ Nhật: 08:00 AM - 09:30 PM</p>
+        <p>Hỗ trợ đặt hàng trực tuyến 24/7 qua website.</p>
+        <div style="margin-top: 20px; font-size: 24px; display: flex; gap: 15px; color: var(--accent);">
+          <i class="fa-brands fa-facebook"></i>
+          <i class="fa-brands fa-youtube"></i>
+          <i class="fa-brands fa-instagram"></i>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 Aquatica. All rights reserved. Bản quyền website thuộc về Aquatica Store.
+    </div>
+  </footer>
+
+  <!-- Firebase Scripts (Compatibility Mode) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <!-- Firebase Configurations -->
+  <script src="firebase-config.js"></script>
+  <!-- Application Client JS -->
+  <script src="app.js"></script>
+</body>
+</html>
