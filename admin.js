@@ -354,7 +354,7 @@ function renderAdminProducts() {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>
-        <img src="${prod.imageUrl || 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?q=80&w=100'}" 
+        <img src="${prod.imageUrl || 'images/ongtien.jpg'}" 
              alt="${prod.name}" 
              style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
       </td>
@@ -441,10 +441,10 @@ window.saveProduct = async function(e) {
   
   // Gán ảnh mặc định tùy danh mục nếu bỏ trống đường dẫn ảnh
   if (!imageUrl) {
-    if (category === 'ca-canh') imageUrl = "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?q=80&w=600";
-    else if (category === 'cay-thuy-sinh') imageUrl = "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=600";
-    else if (category === 'bom-loc') imageUrl = "https://images.unsplash.com/photo-1590005354167-6da97870c913?q=80&w=600";
-    else imageUrl = "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600";
+    if (category === 'ca-canh') imageUrl = "images/ongtien.jpg";
+    else if (category === 'cay-thuy-sinh') imageUrl = "images/xecan.jpg";
+    else if (category === 'bom-loc') imageUrl = "images/bomchim.jpg";
+    else imageUrl = "images/den.jpg";
   }
   
   const productData = {

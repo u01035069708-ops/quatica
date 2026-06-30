@@ -5,93 +5,113 @@
 const DEFAULT_PRODUCTS = [
   {
     id: "prod-1",
-    name: "Cá Koi Nhật Kohaku (Size 20-25cm)",
+    name: "Cá Ông Tiên Albino Platinum",
     category: "ca-canh",
-    price: 450000,
-    status: "in-stock", // in-stock hoặc out-of-stock
+    price: 150000,
+    status: "in-stock",
     quantity: 15,
-    imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=600&auto=format&fit=crop",
-    description: "Cá Koi Nhật Kohaku chuẩn đẹp, màu sắc đỏ trắng sắc nét, bơi khỏe mạnh."
+    imageUrl: "images/ongtien.jpg",
+    description: "Cá ông tiên vây dài uyển chuyển, sắc trắng bạch kim tinh khiết sang trọng cho bể thủy sinh."
   },
   {
     id: "prod-2",
-    name: "Cá Vàng Oranda ngũ sắc siêu lân",
+    name: "Cá Vàng Oranda (Ba Đuôi) Siêu Lân",
     category: "ca-canh",
     price: 180000,
     status: "in-stock",
     quantity: 25,
-    imageUrl: "https://images.unsplash.com/photo-1524704654690-b56c05c78a02?q=80&w=600&auto=format&fit=crop",
-    description: "Cá Vàng Oranda đầu lân to tròn, vây bơi uyển chuyển, dễ nuôi."
+    imageUrl: "images/baduoi.jpg",
+    description: "Cá vàng Oranda đuôi to tròn thướt tha, đầu lân phát triển tốt, màu sắc rực rỡ và dễ nuôi."
   },
   {
     id: "prod-3",
-    name: "Cá Betta Halfmoon Koi Galaxy",
+    name: "Cá Bảy Màu Guppy Full Gold",
     category: "ca-canh",
-    price: 220000,
+    price: 40000,
     status: "in-stock",
-    quantity: 8,
-    imageUrl: "https://images.unsplash.com/photo-1534080391025-a77af3ec37db?q=80&w=600&auto=format&fit=crop",
-    description: "Cá chọi Betta đuôi dài vây rộng Halfmoon, màu sắc đa dạng sặc sỡ."
+    quantity: 50,
+    imageUrl: "images/baymau.jpg",
+    description: "Cá bảy màu Guppy dòng Full Gold thuần chủng, vây đuôi xòe rộng óng ánh cực kỳ thu hút."
   },
   {
     id: "prod-4",
-    name: "Cây Thủy Sinh Rêu Java (Java Moss) vỉ 10x10",
-    category: "cay-thuy-sinh",
-    price: 45000,
+    name: "Cá Sọc Ngựa Dạ Quang (Đủ Màu)",
+    category: "ca-canh",
+    price: 15000,
     status: "in-stock",
-    quantity: 30,
-    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop",
-    description: "Rêu thủy sinh Java dễ trồng, không cần nhiều CO2, thích hợp làm tổ cho tép cảnh."
+    quantity: 100,
+    imageUrl: "images/socnguadaquang.jpg",
+    description: "Cá sọc ngựa dạ quang bơi theo đàn cực đẹp, phản quang rực rỡ dưới ánh đèn LED bể cá."
   },
   {
     id: "prod-5",
-    name: "Cây Dương Xỉ Lá Thuôn (Microsorum)",
-    category: "cay-thuy-sinh",
-    price: 65000,
-    status: "out-of-stock",
-    quantity: 0,
-    imageUrl: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=600&auto=format&fit=crop",
-    description: "Dương xỉ thủy sinh bám đá, phát triển chậm nhưng bền bỉ, tạo cảnh quan tự nhiên."
+    name: "Cá Cánh Buồm Dạ Quang Vây Dài",
+    category: "ca-canh",
+    price: 25000,
+    status: "in-stock",
+    quantity: 60,
+    imageUrl: "images/vaydaquang.jpg",
+    description: "Cá cánh buồm dạ quang vây dài với màu sắc huỳnh quang bắt mắt, bơi lội năng động."
   },
   {
     id: "prod-6",
-    name: "Máy Bơm Nước Siêu Êm Periha PB-10000 (20W)",
+    name: "Máy Bơm Chìm Periha PB-10000",
     category: "bom-loc",
     price: 1350000,
     status: "in-stock",
-    quantity: 5,
-    imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=600&auto=format&fit=crop",
-    description: "Bơm tiết kiệm điện điều chỉnh 3 chế độ lưu lượng, hoạt động êm ái cho hồ cá lớn."
+    quantity: 8,
+    imageUrl: "images/bomchim.jpg",
+    description: "Máy bơm chìm siêu êm tiết kiệm điện, tích hợp điều chỉnh 3 chế độ lưu lượng nước linh hoạt."
   },
   {
     id: "prod-7",
-    name: "Hệ thống Lọc Thùng Atman DF-700",
+    name: "Máy Lọc Nước Bể Cá Vipsun VS-680",
     category: "bom-loc",
-    price: 950000,
+    price: 95000,
     status: "in-stock",
-    quantity: 12,
-    imageUrl: "https://images.unsplash.com/photo-1590005354167-6da97870c913?q=80&w=600&auto=format&fit=crop",
-    description: "Lọc ngoài bể cá hiệu năng cao, tích hợp đầy đủ phụ kiện lọc thô, lọc tinh."
+    quantity: 30,
+    imageUrl: "images/vipsun.jpg",
+    description: "Hệ thống lọc nước treo bể cá Vipsun nhỏ gọn hiệu quả, vận hành êm ái tích hợp tạo oxy."
   },
   {
     id: "prod-8",
-    name: "Đèn LED Thủy Sinh Chihiros A2 601 (26W)",
-    category: "phu-kien",
-    price: 820000,
+    name: "Bông Lọc Nước Siêu Mịn 6 Lớp",
+    category: "bom-loc",
+    price: 35000,
     status: "in-stock",
-    quantity: 10,
-    imageUrl: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=600&auto=format&fit=crop",
-    description: "Đèn chuyên dụng cho cây thủy sinh, kết nối app chỉnh cường độ và thời gian."
+    quantity: 80,
+    imageUrl: "images/bongloc.jpg",
+    description: "Bông lọc nước đa lớp siêu mịn, lọc sạch cặn bẩn li ti, tái sử dụng được nhiều lần sau khi giặt."
   },
   {
     id: "prod-9",
-    name: "Thức ăn cá cảnh Hikari Gold (Nhật Bản) 100g",
+    name: "Đèn LED Thủy Sinh Chihiros A2 601",
     category: "phu-kien",
-    price: 75000,
+    price: 820000,
     status: "in-stock",
-    quantity: 50,
-    imageUrl: "https://images.unsplash.com/photo-1608454367599-c1139e6587fa?q=80&w=600&auto=format&fit=crop",
-    description: "Cám dinh dưỡng giúp cá cảnh lên màu đẹp, hỗ trợ hệ tiêu hóa khỏe mạnh."
+    quantity: 12,
+    imageUrl: "images/den.jpg",
+    description: "Đèn LED chuyên dụng cho cây thủy sinh, kết nối app chỉnh cường độ và mô phỏng ánh sáng mặt trời."
+  },
+  {
+    id: "prod-10",
+    name: "Thức Ăn Cho Cá Cảnh Omega Cảnh Đẹp",
+    category: "phu-kien",
+    price: 45000,
+    status: "in-stock",
+    quantity: 120,
+    imageUrl: "images/omega.jpg",
+    description: "Cám dinh dưỡng cao cấp Omega hạt chìm/nổi thích hợp cho nhiều dòng cá cảnh khác nhau."
+  },
+  {
+    id: "prod-11",
+    name: "Cát Nắng Vàng Xe Cát Trải Nền",
+    category: "cay-thuy-sinh",
+    price: 20000,
+    status: "in-stock",
+    quantity: 150,
+    imageUrl: "images/xecan.jpg",
+    description: "Cát vàng tự nhiên trải nền sạch sẽ, không gây ảnh hưởng đến pH nước, lý tưởng cho bể cá cảnh và cây thủy sinh."
   }
 ];
 
@@ -163,8 +183,9 @@ function setupLocalFallbackIndicator() {
     indicator.style.color = "var(--warning)";
     indicator.innerHTML = `<i class="fa-solid fa-server"></i> Chế độ Offline/Local (Chưa kết nối Firebase, xem HUONG_DAN_CAU_HINH.md để kích hoạt)`;
   }
-  // Đồng bộ sản phẩm mẫu vào LocalStorage nếu chưa có
-  if (!localStorage.getItem("aquatica_products")) {
+  // Đồng bộ sản phẩm mẫu vào LocalStorage nếu chưa có hoặc chứa ảnh Unsplash cũ
+  const localProds = localStorage.getItem("aquatica_products");
+  if (!localProds || localProds.includes("images.unsplash.com")) {
     localStorage.setItem("aquatica_products", JSON.stringify(DEFAULT_PRODUCTS));
   }
   if (!localStorage.getItem("aquatica_orders")) {
@@ -187,8 +208,10 @@ function loadProducts() {
         currentProducts.push({ id: doc.id, ...doc.data() });
       });
       
-      // Nếu database Firebase trống, đồng bộ dữ liệu mẫu lên Firestore để tiện kiểm tra
-      if (currentProducts.length === 0) {
+      // Nếu database Firebase trống, hoặc nếu các sản phẩm default dùng ảnh Unsplash, đồng bộ lại dữ liệu mẫu
+      const hasOldUnsplashImages = currentProducts.some(prod => prod.id.startsWith("prod-") && prod.imageUrl && prod.imageUrl.includes("images.unsplash.com"));
+      
+      if (currentProducts.length === 0 || hasOldUnsplashImages) {
         syncMockToFirebase();
       } else {
         renderProducts(currentProducts);
@@ -204,7 +227,12 @@ function loadProducts() {
 
 function loadProductsLocal() {
   const localProds = localStorage.getItem("aquatica_products");
-  currentProducts = localProds ? JSON.parse(localProds) : DEFAULT_PRODUCTS;
+  if (!localProds || localProds.includes("images.unsplash.com")) {
+    localStorage.setItem("aquatica_products", JSON.stringify(DEFAULT_PRODUCTS));
+    currentProducts = DEFAULT_PRODUCTS;
+  } else {
+    currentProducts = JSON.parse(localProds);
+  }
   renderProducts(currentProducts);
 }
 
@@ -262,7 +290,7 @@ function renderProducts(productsList) {
     card.className = "product-card";
     card.innerHTML = `
       <div class="product-img-wrapper">
-        <img src="${prod.imageUrl || 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?q=80&w=600'}" alt="${prod.name}" class="product-img" loading="lazy">
+        <img src="${prod.imageUrl || 'images/ongtien.jpg'}" alt="${prod.name}" class="product-img" loading="lazy">
         <span class="product-badge">${catLabel}</span>
         <span class="stock-badge ${stockClass}">${stockLabel}</span>
       </div>
@@ -457,7 +485,7 @@ function updateCartUI() {
     const div = document.createElement("div");
     div.className = "cart-item";
     div.innerHTML = `
-      <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?q=80&w=100'}" alt="${item.name}" class="cart-item-img">
+      <img src="${item.imageUrl || 'images/ongtien.jpg'}" alt="${item.name}" class="cart-item-img">
       <div class="cart-item-details">
         <h4 class="cart-item-name">${item.name}</h4>
         <div class="cart-item-price">${itemPriceFormatted} &times; ${item.qty} = <strong>${itemTotalFormatted}</strong></div>
