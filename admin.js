@@ -354,7 +354,7 @@ function renderAdminProducts() {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>
-        <img src="${prod.imageUrl || 'images/ongtien.jpg'}" 
+        <img src="${prod.imageUrl || 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?q=80&w=100'}" 
              alt="${prod.name}" 
              style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
       </td>
@@ -439,14 +439,7 @@ window.saveProduct = async function(e) {
   let imageUrl = document.getElementById("form-image-url").value.trim();
   const description = document.getElementById("form-description").value.trim();
   
-  // Gán ảnh mặc định tùy danh mục nếu bỏ trống đường dẫn ảnh
-  if (!imageUrl) {
-    if (category === 'ca-canh') imageUrl = "images/ongtien.jpg";
-    else if (category === 'cay-thuy-sinh') imageUrl = "images/xecan.jpg";
-    else if (category === 'bom-loc') imageUrl = "images/bomchim.jpg";
-    else imageUrl = "images/den.jpg";
-  }
-  
+
   const productData = {
     name,
     category,
